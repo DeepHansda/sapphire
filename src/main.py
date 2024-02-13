@@ -1,0 +1,8 @@
+from fastapi import FastAPI
+from controllers.MainControllers import MainControllers
+app = FastAPI()
+
+mainControllers = MainControllers()
+
+@app.get('/')
+mainControllers.root()
