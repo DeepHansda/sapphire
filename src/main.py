@@ -5,4 +5,5 @@ app = FastAPI()
 mainControllers = MainControllers()
 
 @app.get('/')
-mainControllers.root()
+async def root():
+    await mainControllers.root()
