@@ -6,4 +6,4 @@ mainControllers = MainControllers()
 
 @app.get('/')
 async def root():
-    await mainControllers.root()
+   return await mainControllers.root()
