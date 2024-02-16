@@ -33,4 +33,4 @@ async def root():
 
 @app.post("/ttimg")
 async def ttimg(prompt:Text2Image_Type) -> Response:
-    return await t2ImgControllers.root(prompt)
+    return await t2ImgControllers.text2img(prompt)
