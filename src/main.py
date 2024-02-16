@@ -3,13 +3,25 @@ from pydantic import BaseModel
 from fastapi.responses import Response
 from fastapi.responses import FileResponse
 from fastapi.requests import Request
-from controllers.T2ImgControllers import T2ImgControllers
-from types.Types import Text2Image_Type
+from controllers.Text2ImgControllers import Text2ImgControllers
+from common.Types import Text2Image_Type
+from contextlib import asynccontextmanager
+
+t2ImgControllers = Text2ImgControllers()
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+   
+   t2ImgControllers.setup()
+   yield
+   print("stopping")
+   
+   
 
 
-app = FastAPI()
 
-t2ImgControllers = T2ImgControllers()
+app = FastAPI(lifespan = lifespan)
+
+
 
 
    
