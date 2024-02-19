@@ -27,7 +27,9 @@ class Text2ImgControllers:
         
     async def text2img(self,req:Text2Image_Type) -> Response: 
         prompt = req.prompt
-        image:Image.Image = self.pipeline(prompt=prompt , num_inference_steps=25).images[0]
+        negative_prompt = req.negative_prompt
+        
+        image:Image.Image = self.pipeline(prompt=prompt , negative_prompt=negative_prompt, num_inference_steps=25).images[0]
          
         buf = io.BytesIO()
         image.save(buf, format="PNG")

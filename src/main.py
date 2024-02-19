@@ -7,6 +7,8 @@ from controllers.Text2ImgControllers import Text2ImgControllers
 from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
+from routes.text2imgRouter import text2imgRouter
+
 t2ImgControllers = Text2ImgControllers()
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -21,6 +23,7 @@ async def lifespan(app:FastAPI):
 
 app = FastAPI(lifespan = lifespan)
 
+app.include_router(text2imgRouter)
 
 
 
@@ -30,7 +33,3 @@ app = FastAPI(lifespan = lifespan)
 @app.get('/')
 async def root():
    return await mainControllers.root()
-
-@app.post("/ttimg")
-async def ttimg(prompt:Text2Image_Type) -> Response:
-    return await t2ImgControllers.text2img(prompt)
