@@ -2,9 +2,10 @@ from fastapi import APIRouter, Response
 from controllers.Text2ImgControllers import Text2ImgControllers
 from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
-router = APIRouter()
 
 t2ImgControllers = Text2ImgControllers()
+router = APIRouter(on_startup=[t2ImgControllers.setup])
+
 
 
 @router.post("/ttimg")

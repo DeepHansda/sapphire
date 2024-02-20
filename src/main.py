@@ -7,23 +7,23 @@ from controllers.Text2ImgControllers import Text2ImgControllers
 from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
-from routes.text2imgRouter import text2imgRouter
+import routes.text2imgRouter as text2imgRouter
 
-t2ImgControllers = Text2ImgControllers()
-@asynccontextmanager
-async def lifespan(app:FastAPI):
+# t2ImgControllers = Text2ImgControllers()
+# @asynccontextmanager
+# async def lifespan(app:FastAPI):
    
-   t2ImgControllers.setup()
-   yield
-   print("stopping")
+#    t2ImgControllers.setup()
+#    yield
+#    print("stopping")
    
    
 
 
 
-app = FastAPI(lifespan = lifespan)
+app = FastAPI()
+app.include_router(text2imgRouter.router)
 
-app.include_router(text2imgRouter)
 
 
 
