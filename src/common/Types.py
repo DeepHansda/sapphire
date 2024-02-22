@@ -7,6 +7,8 @@ class Text2Image_Type(BaseModel):
     negative_prompt:str
     width:int | None
     height:int | None
+    scheduler: str
+    use_kerras:bool
     seed:int   | None
     guidance_scale: float| None
     

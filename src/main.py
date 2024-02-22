@@ -32,4 +32,4 @@ app.include_router(text2imgRouter.router)
    
 @app.get('/')
 async def root():
-   return await mainControllers.root()
+   return "<h1>server working!</h1>"
