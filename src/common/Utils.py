@@ -49,9 +49,8 @@ class Utils:
 
         return prompt_embeds,negative_prompt_embeds
     
-    def get_scheduler(pipeline:Any,scheduler_name:str,use_kerras:bool=False):
-        def __init__(self):
-            pass
+    def get_scheduler(self,pipeline:Any,scheduler_name:str,use_kerras:bool=False):
+        
         scheduler_name = scheduler_name.lower()
         config = pipeline.scheduler.config
 
