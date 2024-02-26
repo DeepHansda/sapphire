@@ -8,6 +8,8 @@ from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
 import routes.text2imgRouter as text2imgRouter
+import common.Folder_Paths as Folder_Paths
+from common.Folder_Paths import add_folders_in_models_folder
 
 # t2ImgControllers = Text2ImgControllers()
 # @asynccontextmanager
@@ -23,7 +25,8 @@ import routes.text2imgRouter as text2imgRouter
 
 app = FastAPI()
 app.include_router(text2imgRouter.router)
-
+folder_path = Folder_Paths.Folder_paths()
+add_folders_in_models_folder()
 
 
 
