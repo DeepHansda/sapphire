@@ -11,6 +11,7 @@ class Text2Image_Type(BaseModel):
     use_kerras:bool
     seed:int   | None
     guidance_scale: float| None
+    use_lora:bool
     
     
 class Text_Emmbed_Type(BaseModel,StableDiffusionPipeline):

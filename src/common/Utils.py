@@ -53,7 +53,7 @@ class Utils:
         
         scheduler_name = scheduler_name.lower()
         config = pipeline.scheduler.config
-
+        print(config)
         scheduler_classes = {
             'eular': EulerDiscreteScheduler,
             'eular_a': EulerAncestralDiscreteScheduler,
@@ -68,7 +68,10 @@ class Utils:
         }
         scheduler_class = scheduler_classes.get(scheduler_name)
         if scheduler_class:
-            return scheduler_class.from_config(config)
+            scheduler = scheduler_class.from_config(config)
+            if use_kerras is True:
+                scheduler.use_karras_sigmas = use_kerras
+            return scheduler
         else:
             raise ValueError(f"Unsupported scheduler: {scheduler_name}")
 
