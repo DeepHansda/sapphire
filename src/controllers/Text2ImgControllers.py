@@ -22,11 +22,11 @@ class Text2ImgControllers:
                
             
         
-        model_path ="runwayml/stable-diffusion-v1-5"
+        model_path ="/kaggle/working/sapphire/src/models/checkpoints/revAnimated_v10_pruned.safetensors"
         pipeline:StableDiffusionPipeline = AutoPipelineForText2Image.from_pretrained(
                 model_path, torch_dtype=torch.float16,  use_safetensors=True,safety_checker=None
         ).to("cuda")
-      
+        # pipeline.enable_xformers_memory_efficient_attention()
         print(type(pipeline))
         self.pipeline:StableDiffusionPipeline = pipeline
         

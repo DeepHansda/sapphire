@@ -10,7 +10,7 @@ folder_names_and_paths = {
 }
 
 def folder_creator(folder_path:str):
-        os.makedirs(folder_path)
+        os.makedirs(folder_path,exist_ok=True)
         print("folder created!")
         
         
