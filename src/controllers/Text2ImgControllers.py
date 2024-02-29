@@ -1,9 +1,9 @@
 from fastapi.responses import Response
-from diffusers import AutoPipelineForText2Image
+from diffusers import AutoPipelineForText2Image,AutoencoderKL
 
 
 
-import torch,io
+import torch
 from PIL import Image
 from common.Types import Text2Image_Type
 from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import StableDiffusionPipeline
@@ -20,9 +20,14 @@ class Text2ImgControllers:
     
     def setup(self):
         model_path ="/kaggle/working/sapphire/src/models/checkpoints/DreamShaper_8_pruned.safetensors"
+        
+        vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+        
+        vae = AutoencoderKL.from_single_file(vae_path,torch_dtype=torch.float16).to("cuda")
         pipeline:StableDiffusionPipeline = StableDiffusionPipeline.from_single_file(
-                model_path, torch_dtype=torch.float16,  use_safetensors=True,safety_checker=None
+                model_path, vae=vae,  torch_dtype=torch.float16,  use_safetensors=True,safety_checker=None
         ).to("cuda")
+        
         # pipeline.enable_xformers_memory_efficient_attention()
         print(type(pipeline))
 
@@ -33,25 +38,43 @@ class Text2ImgControllers:
     async def text2img(self,req:Text2Image_Type) -> Response: 
         prompt = req.prompt
         negative_prompt = req.negative_prompt
+        width = req.width
+        height = req.height
+        steps= req.steps
+        guidance_scale = req.guidance_scale
         scheduler = self.diff_utils.get_scheduler(self.pipeline,req.scheduler,req.use_kerras)
-        lora_path = "/kaggle/working/sapphire/src/models/loras/Style_3D.Rendering.safetensors"
         
-        print(req)
-        
-        
-        image:Image.Image = self.pipeline(prompt=prompt , negative_prompt=negative_prompt, num_inference_steps=25).images[0]
+        print(width, height,guidance_scale)
         
         
+        lora_path = "/kaggle/working/sapphire/src/models/loras/ghibli_style_offset.safetensors"
+        
+        if req.seed == -1:
+            seed = self.diff_utils.random_seed(10)
+        else:
+            seed = req.seed
+        
+        print(seed)
+        generator = torch.Generator(device="cuda").manual_seed(seed)
         self.pipeline.scheduler = scheduler
+        
+        
+        
         if req.use_lora is True:
-            self.pipeline.load_lora_weights(lora_path,weight_name="Style_3D.Rendering.safetensors")
-            self.pipeline.fuse_lora("0.7")
+            self.pipeline.load_lora_weights(lora_path,weight_name="ghibli_style_offset.safetensors")
+            self.pipeline.fuse_lora("1.0")
+        else:
+            self.pipeline.unfuse_lora()
+            self.pipeline.unload_lora_weights()
         print(self.pipeline.scheduler)
+        
+        
+        
+        image:Image.Image = self.pipeline(prompt=prompt , negative_prompt=negative_prompt,width=width,height=height, generator=generator,guidance_scale = guidance_scale, num_inference_steps=steps).images[0]
+        
+        
          
-        buf = io.BytesIO()
-        image.save(buf, format="PNG")
-         
-        byte_img = buf.getvalue()
+        byte_img = self.diff_utils.get_byte_img(image)
          
         return Response(content=byte_img,media_type="image/png")
         

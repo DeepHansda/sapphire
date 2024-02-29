@@ -1,3 +1,4 @@
+from random import randint
 from typing import Any
 from diffusers import (
     DDPMScheduler,
@@ -19,7 +20,12 @@ from diffusers import (
 )
 
 from common.Types import Text_Emmbed_Type
-import torch
+from PIL import Image
+import torch,io
+
+
+
+
 
 class Utils:
     def __init__(self):
@@ -53,7 +59,7 @@ class Utils:
         
         scheduler_name = scheduler_name.lower()
         config = pipeline.scheduler.config
-        print(config)
+
         scheduler_classes = {
             'eular': EulerDiscreteScheduler,
             'eular_a': EulerAncestralDiscreteScheduler,
@@ -74,6 +80,20 @@ class Utils:
             return scheduler
         else:
             raise ValueError(f"Unsupported scheduler: {scheduler_name}")
+        
+    
+    def get_byte_img(self,image:Image.Image):
+        buf = io.BytesIO()
+        image.save(buf, format="PNG")
+        byte_img = buf.getvalue()
+        return byte_img
+        
+            
+    def random_seed(self,n:int) -> int:
+        range_start = 10**(n-1)
+        range_end = (10**n)-1
+        return randint(range_start, range_end)
+        
 
 
 

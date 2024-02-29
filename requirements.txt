@@ -3,3 +3,4 @@ uvicorn[standard]
 diffusers[torch] 
 transformers
 xformers
+peft

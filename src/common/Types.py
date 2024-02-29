@@ -5,12 +5,13 @@ from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import Stabl
 class Text2Image_Type(BaseModel):
     prompt:str
     negative_prompt:str
-    width:int | None
-    height:int | None
+    width:int | int = 512
+    height:int | int = 512
     scheduler: str
+    steps:int | int = 20
     use_kerras:bool
-    seed:int   | None
-    guidance_scale: float| None
+    seed:int   | None = None
+    guidance_scale: float| float = 7.0
     use_lora:bool
     
     
