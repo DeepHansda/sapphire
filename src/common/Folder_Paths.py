@@ -3,6 +3,9 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 cwd = os.getcwd()
 MODELS = "models"
 models_dir = os.path.join(cwd, MODELS)
+
+
+
 folder_names_and_paths = {
     "checkpoints": (os.path.join(models_dir, "checkpoints")),
     "loras": (os.path.join(models_dir, "loras")),
@@ -41,6 +44,26 @@ class Folder_paths:
         else:
             folder_names_and_paths[folder_name] = folder_path
             print(f"{folder_name} folder added to models path!")
+    def search_file_in_path(self,folder_name:str,file_name:str):
+        model_folder_names = set(folder_names_and_paths.keys())
+
+        for f in model_folder_names:
+            if f == folder_name:
+                folder_path = os.path.join(models_dir,folder_name)
+            else :
+                folder_path = os.path.join(cwd,folder_name)
+      
+        try:
+            if os.path.exists(folder_path) and os.path.isdir(folder_path):
+                for root, _, files in os.walk(folder_path):
+                    if file_name in files:
+                        p = os.path.join(root, file_name)
+                        # print(p)
+                        return p
+            
+        except FileNotFoundError as e:
+            print(f"{file_name} not found in {folder_name} folder!")
+            raise FileNotFoundError(f"File {file_name} not found in {folder_name} folder") from e    
         
         
     

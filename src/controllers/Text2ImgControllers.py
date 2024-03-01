@@ -43,8 +43,9 @@ class Text2ImgControllers:
         steps= req.steps
         guidance_scale = req.guidance_scale
         scheduler = self.diff_utils.get_scheduler(self.pipeline,req.scheduler,req.use_kerras)
+        # self.pipeline.scheduler.use_kerras_sigmas = req.use_kerras
         
-        print(width, height,guidance_scale)
+        print(scheduler)
         
         
         lora_path = "/kaggle/working/sapphire/src/models/loras/ghibli_style_offset.safetensors"
