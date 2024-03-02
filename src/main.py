@@ -14,12 +14,12 @@ from common.Folder_Paths import add_folders_in_models_folder
 # t2ImgControllers = Text2ImgControllers()
 folder_path = Folder_Paths.Folder_paths()
 
-@asynccontextmanager
-async def lifespan(app:FastAPI):
+# @asynccontextmanager
+# async def lifespan(app:FastAPI):
    
-   t2ImgControllers.setup()
-   yield
-   print("stopping")
+#    t2ImgControllers.setup()
+#    yield
+#    print("stopping")
    
    
 
