@@ -8,6 +8,7 @@ from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
 import routes.text2imgRouter as text2imgRouter
+import routes.extraRouter as extraRouter
 import common.Folder_Paths as Folder_Paths
 from common.Folder_Paths import add_folders_in_models_folder
 
@@ -27,6 +28,7 @@ folder_path = Folder_Paths.Folder_paths()
 
 app = FastAPI()
 app.include_router(text2imgRouter.router)
+app.include_router(extraRouter.extra_router)
 # print(search_file_in_path("checkpoints", "DreamShaper_8_pruned.safetensors"))
 add_folders_in_models_folder()
 print(folder_path.search_file_in_path("checkpoints", "DreamShaper_8_pruned.safetensors"))

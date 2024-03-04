@@ -6,6 +6,8 @@ from diffusers import AutoPipelineForText2Image,AutoencoderKL
 import torch
 from PIL import Image
 from common.Types import Text2Image_Type
+import common.sharedModels as sharedModels
+
 from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import StableDiffusionPipeline
 from common.Utils import Utils
 
@@ -16,12 +18,12 @@ class Text2ImgControllers:
     # diff_utils = Utils()
     def __init__(self):
         self.diff_utils = Utils()
-        pass
+        self.shared_Models = sharedModels.load_file_names()
     
     def setup(self):
-        model_path ="/kaggle/working/sapphire/src/models/checkpoints/DreamShaper_8_pruned.safetensors"
+        model_path =self.shared_Models["checkpoint"]
         
-        vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+        vae_path = self.shared_Models["vae"]
         
         vae = AutoencoderKL.from_single_file(vae_path,torch_dtype=torch.float16).to("cuda")
         pipeline:StableDiffusionPipeline = StableDiffusionPipeline.from_single_file(
