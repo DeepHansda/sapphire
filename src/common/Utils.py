@@ -1,5 +1,5 @@
 from random import randint
-from typing import Any
+from typing import Any,Callable
 from diffusers import (
     DDPMScheduler,
     DDIMScheduler,
@@ -22,6 +22,7 @@ from diffusers import (
 from common.Types import Text_Emmbed_Type
 from PIL import Image
 import torch,io
+from fastapi import HTTPException
 
 
 
@@ -34,7 +35,7 @@ class Utils:
     def seed_generator(self):
         pass
     
-    def get_text_embds(args:Text_Emmbed_Type):
+    def get_text_embds(self,args:Text_Emmbed_Type):
         pipe = args.pipeline
         prompt = args.prompt
         negative_prompt = args.negative_prompt
@@ -93,7 +94,17 @@ class Utils:
         range_start = 10**(n-1)
         range_end = (10**n)-1
         return randint(range_start, range_end)
-        
+    
+    
+    
+    def exception_handler(self,func: Callable[..., Any]) -> Callable:
+        async def wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                # Return the exception as a response
+                raise HTTPException(status_code=500, detail=str(e))
+        return wrapper
 
 
 
