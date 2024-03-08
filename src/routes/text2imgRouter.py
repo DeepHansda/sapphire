@@ -9,5 +9,6 @@ router = APIRouter(on_startup=[t2ImgControllers.setup])
 
 
 @router.post("/ttimg")
-async def ttimg(prompt:Text2Image_Type) -> Response:
-        return await t2ImgControllers.text2img(prompt)
+async def ttimg(prompt:Text2Image_Type):
+        res = await t2ImgControllers.text2img(prompt)
+        return res

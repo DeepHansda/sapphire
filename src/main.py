@@ -11,27 +11,28 @@ import routes.text2imgRouter as text2imgRouter
 import routes.extraRouter as extraRouter
 import common.Folder_Paths as Folder_Paths
 from common.Folder_Paths import add_folders_in_models_folder
+from common.startup import startUp
 
 # t2ImgControllers = Text2ImgControllers()
 folder_path = Folder_Paths.Folder_paths()
 
-# @asynccontextmanager
-# async def lifespan(app:FastAPI):
+@asynccontextmanager
+async def lifespan(app:FastAPI):
    
-#    t2ImgControllers.setup()
-#    yield
-#    print("stopping")
+   startUp()
+   yield
+   print("stopping")
    
    
 
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.include_router(text2imgRouter.router)
 app.include_router(extraRouter.extra_router)
 # print(search_file_in_path("checkpoints", "DreamShaper_8_pruned.safetensors"))
 add_folders_in_models_folder()
-print(folder_path.search_file_in_path("checkpoints", "DreamShaper_8_pruned.safetensors"))
+# print(folder_path.search_file_in_path("checkpoints", "DreamShaper_8_pruned.safetensors"))
 
 
 

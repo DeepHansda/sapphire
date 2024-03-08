@@ -1,4 +1,5 @@
 from fastapi.responses import Response
+from fastapi import HTTPException,status
 from diffusers import AutoPipelineForText2Image,AutoencoderKL
 
 
@@ -6,7 +7,7 @@ from diffusers import AutoPipelineForText2Image,AutoencoderKL
 import torch
 from PIL import Image
 from common.Types import Text2Image_Type
-import common.sharedModels as sharedModels
+import common.shared as sharedValues
 
 from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import StableDiffusionPipeline
 from common.Utils import Utils
@@ -18,17 +19,18 @@ class Text2ImgControllers:
     # diff_utils = Utils()
     def __init__(self):
         self.diff_utils = Utils()
-        self.shared_Models = sharedModels.load_file_names()
+        self.sharedValues = sharedValues.load_shared_values()
     
     def setup(self):
-        model_path =self.shared_Models["checkpoint"]
+        model_path = "/kaggle/working/sapphire/src/models/checkpoints/DreamShaper_8_pruned.safetensors"
         
-        vae_path = self.shared_Models["vae"]
+        vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
         
         vae = AutoencoderKL.from_single_file(vae_path,torch_dtype=torch.float16).to("cuda")
         pipeline:StableDiffusionPipeline = StableDiffusionPipeline.from_single_file(
                 model_path, vae=vae,  torch_dtype=torch.float16,  use_safetensors=True,safety_checker=None
         ).to("cuda")
+        
         
         # pipeline.enable_xformers_memory_efficient_attention()
         print(type(pipeline))
@@ -37,47 +39,47 @@ class Text2ImgControllers:
         
         
         
-    async def text2img(self,req:Text2Image_Type) -> Response: 
-        prompt = req.prompt
-        negative_prompt = req.negative_prompt
-        width = req.width
-        height = req.height
-        steps= req.steps
-        guidance_scale = req.guidance_scale
-        scheduler = self.diff_utils.get_scheduler(self.pipeline,req.scheduler,req.use_kerras)
-        # self.pipeline.scheduler.use_kerras_sigmas = req.use_kerras
-        
-        print(scheduler)
-        
-        
-        lora_path = "/kaggle/working/sapphire/src/models/loras/ghibli_style_offset.safetensors"
-        
-        if req.seed == -1:
-            seed = self.diff_utils.random_seed(10)
-        else:
-            seed = req.seed
-        
-        print(seed)
-        generator = torch.Generator(device="cuda").manual_seed(seed)
-        self.pipeline.scheduler = scheduler
-        
-        
-        
-        if req.use_lora is True:
-            self.pipeline.load_lora_weights(lora_path,weight_name="ghibli_style_offset.safetensors")
-            self.pipeline.fuse_lora("1.0")
-        else:
-            self.pipeline.unfuse_lora()
-            self.pipeline.unload_lora_weights()
-        print(self.pipeline.scheduler)
-        
-        
-        
-        image:Image.Image = self.pipeline(prompt=prompt , negative_prompt=negative_prompt,width=width,height=height, generator=generator,guidance_scale = guidance_scale, num_inference_steps=steps).images[0]
-        
-        
-         
-        byte_img = self.diff_utils.get_byte_img(image)
-         
-        return Response(content=byte_img,media_type="image/png")
+    async def text2img(self,req:Text2Image_Type):
+        try:
+            prompt = req.prompt
+            negative_prompt = req.negative_prompt
+            width = req.width
+            height = req.height
+            steps= req.steps
+            guidance_scale = req.guidance_scale
+            scheduler = self.diff_utils.get_scheduler(self.pipeline,req.scheduler,req.use_kerras)
+            # self.pipeline.scheduler.use_kerras_sigmas = req.use_kerras
+            
+            print(scheduler)
+            
+            
+            lora_path = "/kaggle/working/sapphire/src/models/loras/ghibli_style_offset.safetensors"
+            
+            if req.seed == -1:
+                seed = self.diff_utils.random_seed(10)
+            else:
+                seed = req.seed
+            
+            print(seed)
+            generator = torch.Generator(device="cuda").manual_seed(seed)
+            self.pipeline.scheduler = scheduler
+            
+            
+            
+            if req.use_lora is True:
+                self.pipeline.load_lora_weights(lora_path,weight_name="ghibli_style_offset.safetensors")
+                self.pipeline.fuse_lora("1.0")
+            else:
+                self.pipeline.unfuse_lora()
+                self.pipeline.unload_lora_weights()
+            print(self.pipeline.scheduler)
+            
+            
+            image:Image.Image = self.pipeline(prompt=prompt , negative_prompt=negative_prompt,width=width,height=height, generator=generator,guidance_scale = guidance_scale, num_inference_steps=steps).images[0]
+            
+            byte_img = self.diff_utils.get_byte_img(image)
+            
+            return Response(content=byte_img,media_type="image/png")
+        except Exception as e:
+            return HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
         
