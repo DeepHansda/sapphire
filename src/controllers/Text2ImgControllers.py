@@ -12,12 +12,16 @@ from common.Utils import Utils
 
 
 class Text2ImgControllers:
-    # global diff_utils
-    # diff_utils = Utils()
     def __init__(self):
         self.diff_utils = Utils()
         self.sharedValues = sharedValues.load_shared_values()
         self.device = os.environ.get("DEVICE")
+        
+        self.torch_dtype = torch.float16
+       
+        if self.device == "cpu":
+            self.torch_dtype = torch.float32
+        
 
     def setup(self):
         model_path = "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
@@ -25,7 +29,7 @@ class Text2ImgControllers:
         
         pipeline: StableDiffusionPipeline = StableDiffusionPipeline.from_single_file(
             model_path,
-            torch_dtype=torch.float16,
+            torch_dtype=self.torch_dtype,
             use_safetensors=True,
             safety_checker=None,
         ).to(self.device)
@@ -50,7 +54,7 @@ class Text2ImgControllers:
             
             vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
             if vae_path:
-                vae = AutoencoderKL.from_single_file(vae_path, torch_dtype=torch.float16).to(
+                vae = AutoencoderKL.from_single_file(vae_path, torch_dtype=self.torch_dtype).to(
                    self.device
                 )
             self.pipeline.vae = vae
