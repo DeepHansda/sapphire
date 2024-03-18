@@ -4,7 +4,7 @@ from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
 t2ImgControllers = Text2ImgControllers()
-router = APIRouter(on_startup=[t2ImgControllers.setup])
+router = APIRouter(on_startup=[t2ImgControllers.setup()])
 
 
 

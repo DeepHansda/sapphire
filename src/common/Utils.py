@@ -7,13 +7,20 @@ from typing import Any, Callable
 import torch
 from common.Folder_Paths import models_dir
 from common.Types import Text_Emmbed_Type
-from diffusers import (DDIMScheduler, DDPMScheduler,
-                       DPMSolverMultistepScheduler,
-                       DPMSolverSinglestepScheduler,
-                       EulerAncestralDiscreteScheduler, EulerDiscreteScheduler,
-                       HeunDiscreteScheduler, KDPM2AncestralDiscreteScheduler,
-                       KDPM2DiscreteScheduler, LMSDiscreteScheduler,
-                       PNDMScheduler, UniPCMultistepScheduler)
+from diffusers import (
+    DDIMScheduler,
+    DDPMScheduler,
+    DPMSolverMultistepScheduler,
+    DPMSolverSinglestepScheduler,
+    EulerAncestralDiscreteScheduler,
+    EulerDiscreteScheduler,
+    HeunDiscreteScheduler,
+    KDPM2AncestralDiscreteScheduler,
+    KDPM2DiscreteScheduler,
+    LMSDiscreteScheduler,
+    PNDMScheduler,
+    UniPCMultistepScheduler,
+)
 from fastapi import HTTPException
 from PIL import Image
 
@@ -115,10 +122,18 @@ class Utils:
                 all_models_dic[d] = models_dic
         return all_models_dic
 
-    def download_with_wget(self,url:str, output_path:str):
+    async def download_with_wget(self, url: str, output_path: str):
         try:
             # Command to execute wget with the provided URL and output path
-            command = ["wget", "-c", url, "-O", output_path,"--progress=bar","--show-progress"]
+            command = [
+                "wget",
+                "-c",
+                url,
+                "-O",
+                output_path,
+                "--progress=bar",
+                "--show-progress",
+            ]
 
             # Start the subprocess and redirect stderr to stdout
             process = subprocess.Popen(
@@ -127,7 +142,7 @@ class Utils:
                 stderr=subprocess.STDOUT,
                 universal_newlines=True,
             )
-            
+
             # print(process.stdout.read())
 
             # Read the output stream line by line

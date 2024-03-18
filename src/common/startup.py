@@ -1,20 +1,35 @@
-from common.Utils import Utils
-from common.shared import save_shared_values
 import json
 
-commonUtils = Utils()
+from common.Folder_Paths import models_dir
+from common.shared import save_shared_values
+from common.Utils import Utils
+from controllers.Text2ImgControllers import Text2ImgControllers
+from common.Folder_Paths import add_folders_in_models_folder
+from common.devices import set_device
 
-def startUp():
+commonUtils = Utils()
+text2ImageControllers = Text2ImgControllers()
+
+
+async def startUp():
+    set_device()
+    add_folders_in_models_folder()
+    
     all_models = {}
     all_models = commonUtils.get_all_models()
     if not all_models["checkpoints"]:
         url = "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors"
-        output_path = "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
-        commonUtils.download_with_wget(url, output_path)
+        output_path = models_dir + "/checkpoints/v1-5-pruned-emaonly.safetensors"
+        await commonUtils.download_with_wget(url, output_path)
         all_models = commonUtils.get_all_models()
-    checkpoints = {}
-    # if type(all_models["checkpoints"]) == dict:
-    #     checkpoints = dict(all_models["checkpoints"]).values()[0]
-    # checkpoints["checkpoint"] = (all_models["checkpoints"])
-    print(all_models["checkpoints"])
-    # save_shared_values(checkpoints)
+
+    default_checkpoint = {}
+
+    checkpoint_name, checkpoint_path = next(
+        iter(all_models.get("checkpoints", {}).items()), (None, None)
+    )
+    default_checkpoint[checkpoint_name] = checkpoint_path
+
+    save_shared_values(default_checkpoint)
+    # text2ImageControllers.setup()
+    
