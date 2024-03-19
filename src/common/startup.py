@@ -12,7 +12,7 @@ text2ImageControllers = Text2ImgControllers()
 
 
 async def startUp():
-    set_device()
+    await set_device()
     add_folders_in_models_folder()
     
     all_models = {}

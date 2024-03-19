@@ -4,3 +4,4 @@ diffusers[torch]
 transformers
 xformers
 peft
+python-dotenv
