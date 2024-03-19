@@ -5,12 +5,17 @@ from common.Folder_Paths import add_folders_in_models_folder, models_dir
 from common.shared import save_shared_values
 from common.Utils import Utils
 from controllers.Text2ImgControllers import Text2ImgControllers
+from common.PipelineComponents import PipelineComponents
+
 
 commonUtils = Utils()
 text2ImageControllers = Text2ImgControllers()
+component_pipeline = PipelineComponents()
+
 
 
 async def startUp():
+    
     await set_device()
     add_folders_in_models_folder()
 
@@ -30,4 +35,6 @@ async def startUp():
     default_checkpoint[checkpoint_name] = checkpoint_path
 
     save_shared_values(default_checkpoint)
+    component_pipeline.pipeline_setup()
+    
     # text2ImageControllers.setup()
