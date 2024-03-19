@@ -1,11 +1,10 @@
 import json
 
-from common.Folder_Paths import models_dir
+from common.devices import set_device
+from common.Folder_Paths import add_folders_in_models_folder, models_dir
 from common.shared import save_shared_values
 from common.Utils import Utils
 from controllers.Text2ImgControllers import Text2ImgControllers
-from common.Folder_Paths import add_folders_in_models_folder
-from common.devices import set_device
 
 commonUtils = Utils()
 text2ImageControllers = Text2ImgControllers()
@@ -14,7 +13,7 @@ text2ImageControllers = Text2ImgControllers()
 async def startUp():
     await set_device()
     add_folders_in_models_folder()
-    
+
     all_models = {}
     all_models = commonUtils.get_all_models()
     if not all_models["checkpoints"]:
@@ -32,4 +31,3 @@ async def startUp():
 
     save_shared_values(default_checkpoint)
     # text2ImageControllers.setup()
-    

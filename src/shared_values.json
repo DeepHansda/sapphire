@@ -1,1 +1,4 @@
-{"v1-5-pruned-emaonly.safetensors": "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"}
+{
+    "init_device": "cuda",
+    "v1-5-pruned-emaonly.safetensors": "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
+}

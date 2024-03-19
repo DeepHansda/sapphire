@@ -1,14 +1,12 @@
 import logging
 import os
 import subprocess
-from dotenv import load_dotenv,find_dotenv
 import torch
 from common.shared import save_shared_values
 
+
 CUDA = "cuda"
 CPU = "cpu"
-
-
 
 
 def get_gpu_names() -> set:
@@ -23,8 +21,8 @@ def get_gpu_names() -> set:
 async def set_device_in_shared(device: str):
     init_device = {}
     init_device["init_device"] = device
+
     save_shared_values(init_device)
-    # print(os.environ["INIT_DEVICE"])
 
 
 async def set_device():

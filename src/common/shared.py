@@ -21,8 +21,21 @@ def load_shared_values():
 
 # Save file names to the configuration file
 def save_shared_values(shared_values: Dict[str, str]):
-    with open("shared_values.json", "w") as f:
-        json.dump(shared_values, f)
+    file_path = "shared_values.json"
+
+    # Check if the file exists
+    if os.path.isfile(file_path):
+        # Load existing shared values from the file
+        with open(file_path, "r") as f:
+            existing_shared_values = json.load(f)
+
+        # Update the existing shared values with the new ones
+        existing_shared_values.update(shared_values)
+        shared_values = existing_shared_values
+
+    # Save the updated shared values to the file
+    with open(file_path, "w") as f:
+        json.dump(shared_values, f, indent=4)
 
 
 async def retrive_shared_values(shared_values: Dict[str, str]):
