@@ -31,7 +31,8 @@ class PipelineComponents:
             safety_checker=None,
         ).to(self.device)
 
-        self.component_pipeline = comp_pipeline.components
-    def get_component_pipeline(self):
+        self.component_pipeline = comp_pipeline
         return self.component_pipeline
+        # print(type(self.component_pipeline))
+
     

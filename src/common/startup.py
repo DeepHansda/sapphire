@@ -35,6 +35,6 @@ async def startUp():
     default_checkpoint[checkpoint_name] = checkpoint_path
 
     save_shared_values(default_checkpoint)
-    component_pipeline.pipeline_setup()
+    # component_pipeline.pipeline_setup()
     
     # text2ImageControllers.setup()

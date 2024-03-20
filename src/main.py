@@ -23,8 +23,8 @@ async def lifespan(app:FastAPI):
    print("stopping")
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(text2imgRouter.router)
 app.include_router(extraRouter.extra_router)
+app.include_router(text2imgRouter.router)
 
 
 

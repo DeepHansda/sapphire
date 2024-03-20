@@ -13,14 +13,22 @@ from common.Utils import Utils
 
 class Text2ImgControllers:
     def __init__(self):
+        #setup pipeline component
         self.component_pipeline = PipelineComponents()
+        self.pipeline_component = self.component_pipeline.pipeline_setup()
+        
+        
         self.diff_utils = Utils()
         self.sharedValues = sharedValues.load_shared_values()
         self.device = self.component_pipeline.device
         
 
     async def text2img(self, req: Text2Image_Type):
-        pipeline = AutoPipelineForText2Image.from_pipe(self.component_pipeline.get_component_pipeline())
+        if self.pipeline_component:
+            pipeline = AutoPipelineForText2Image.from_pipe(self.pipeline_component)
+        else:
+            print("Error: Component pipeline is not initialized.")
+        # pipeline = AutoPipelineForText2Image.from_pipe(self.component_pipeline.get_component_pipeline())
         prompt = req.prompt
         negative_prompt = req.negative_prompt
         width = req.width
