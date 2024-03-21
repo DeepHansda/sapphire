@@ -1,12 +1,17 @@
 import json
 import os
 
-from common.Folder_Paths import models_dir
+from common.Folder_Paths import models_dir, Folder_paths
 from common.Utils import Utils
+from common.shared import save_shared_values
+from common.PipelineComponents import PipelineComponents
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
+from common.const import CHECKPOINT,CHECKPOINTS,LORAS,LORA
 
 commonUtils = Utils()
+folder_paths = Folder_paths()
+pipelineComponents = PipelineComponents()
 
 
 class ModelsController:
@@ -50,3 +55,21 @@ class ModelsController:
             return JSONResponse(status_code=status.HTTP_200_OK, content=all_models_dic)
         except Exception as e:
             return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+    @commonUtils.exception_handler
+    async def change_model_by_type(self, model_name: str, model_type: str):
+       
+        file_name, path = folder_paths.search_file_in_path(model_type, model_name)
+        model = {}
+        if model_type == CHECKPOINTS:
+            model_type = CHECKPOINT
+        if model_type == LORAS:
+            model_type = LORA
+        model[model_type] = path
+        save_shared_values(model)
+        pipelineComponents.pipeline_setup()
+
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={"model_name": file_name, "model_path": path},
+        )

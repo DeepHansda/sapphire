@@ -13,48 +13,34 @@ from common.Utils import Utils
 
 class Text2ImgControllers:
     def __init__(self):
-        #setup pipeline component
-        self.component_pipeline = PipelineComponents()
-        self.pipeline_component = self.component_pipeline.pipeline_setup()
-        
-        
+        # setup pipeline component
+        self.pipeline_components = PipelineComponents()
+        self.shared_component = self.pipeline_components.pipeline_setup()
+
         self.diff_utils = Utils()
         self.sharedValues = sharedValues.load_shared_values()
-        self.device = self.component_pipeline.device
-        
+        self.device = self.pipeline_components.device
 
     async def text2img(self, req: Text2Image_Type):
-        if self.pipeline_component:
-            pipeline = AutoPipelineForText2Image.from_pipe(self.pipeline_component)
-        else:
-            print("Error: Component pipeline is not initialized.")
-        # pipeline = AutoPipelineForText2Image.from_pipe(self.component_pipeline.get_component_pipeline())
+        pipeline = AutoPipelineForText2Image.from_pipe(self.shared_component)
+
         prompt = req.prompt
         negative_prompt = req.negative_prompt
         width = req.width
         height = req.height
         steps = req.steps
         guidance_scale = req.guidance_scale
-        scheduler = self.diff_utils.get_scheduler(
-            pipeline, req.scheduler, req.use_kerras
+        scheduler = self.pipeline_components.get_scheduler(
+            req.scheduler, req.use_kerras
         )
         # self.pipeline.scheduler.use_kerras_sigmas = req.use_kerras
-
-        print(scheduler)
-
-        
+        seed, generator = self.diff_utils.seed_handler(req.seed)
+        print(seed)
 
         lora_path = (
             "/kaggle/working/sapphire/src/models/loras/ghibli_style_offset.safetensors"
         )
 
-        if req.seed == -1:
-            seed = self.diff_utils.random_seed(10)
-        else:
-            seed = req.seed
-
-        print(seed)
-        generator = torch.Generator(device=self.device).manual_seed(seed)
         pipeline.scheduler = scheduler
 
         # if req.use_lora is True:

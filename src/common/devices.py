@@ -3,7 +3,7 @@ import os
 import subprocess
 import torch
 from common.shared import save_shared_values
-
+from common.const import INIT_DEVICE
 
 CUDA = "cuda"
 CPU = "cpu"
@@ -20,7 +20,7 @@ def get_gpu_names() -> set:
 
 async def set_device_in_shared(device: str):
     init_device = {}
-    init_device["init_device"] = device
+    init_device[INIT_DEVICE] = device
 
     save_shared_values(init_device)
 

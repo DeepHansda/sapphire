@@ -1,4 +1,5 @@
 import os
+from common.const import CHECKPOINTS, LORAS, VAE
 
 base_path = os.path.dirname(os.path.realpath(__file__))
 cwd = os.getcwd()
@@ -7,9 +8,9 @@ models_dir = os.path.join(cwd, MODELS)
 
 
 folder_names_and_paths = {
-    "checkpoints": (os.path.join(models_dir, "checkpoints")),
-    "loras": (os.path.join(models_dir, "loras")),
-    "vae": (os.path.join(models_dir, "vae")),
+    CHECKPOINTS: (os.path.join(models_dir, CHECKPOINTS)),
+    LORAS: (os.path.join(models_dir, LORAS)),
+    VAE: (os.path.join(models_dir, VAE)),
 }
 
 
@@ -44,9 +45,12 @@ class Folder_paths:
             folder_names_and_paths[folder_name] = folder_path
             print(f"{folder_name} folder added to models path!")
 
-    def search_file_in_path(self, folder_name: str, file_name: str):
-        folder_path = os.path.join(
-            models_dir, folder_name) if folder_name in folder_names_and_paths else os.path.join(cwd, folder_name)
+    def search_file_in_path(self, folder_name: str, file_name: str) -> (str, str):
+        folder_path = (
+            os.path.join(models_dir, folder_name)
+            if folder_name in folder_names_and_paths
+            else os.path.join(cwd, folder_name)
+        )
         error_msg = f"{file_name} not found in {folder_name} folder!"
 
         if not os.path.exists(folder_path) or not os.path.isdir(folder_path):
@@ -57,7 +61,7 @@ class Folder_paths:
             for f in files:
                 if f == file_name:
                     p = os.path.join(root, f)
-                    return p
+                    return f, p
 
         print(error_msg)
         raise FileNotFoundError(error_msg)

@@ -1,6 +1,5 @@
 from typing import Any
 from pydantic import BaseModel
-from diffusers.pipelines.stable_diffusion.pipeline_stable_diffusion import StableDiffusionPipeline
 
 class Text2Image_Type(BaseModel):
     prompt:str
@@ -15,7 +14,10 @@ class Text2Image_Type(BaseModel):
     use_lora:bool
     
     
-class Text_Emmbed_Type(BaseModel,StableDiffusionPipeline):
+class Text_Emmbed_Type(BaseModel):
     prompt:str
     negative_prompt:str
     pipeline:Any
+class Model_Request_Type(BaseModel):
+    model_name:str
+    model_type:str

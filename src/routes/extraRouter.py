@@ -4,6 +4,7 @@ import common.shared as sharedValues
 from common.Utils import Utils
 from controllers.ModelsControllers import ModelsController
 from fastapi import APIRouter, Path, Response, status
+from common.Types import Model_Request_Type
 
 commonUtils = Utils()
 
@@ -27,4 +28,8 @@ async def get_models(model_type: Annotated[str, Path(title="to get the models")]
 @extra_router.get("/get-all-models")
 async def get_all_models():
     res = await modelsController.get_all_models()
+    return res
+@extra_router.post("/get-models-by-type")
+async def get_models_by_type(req:Model_Request_Type):
+    res = await modelsController.change_model_by_type(req.model_name, req.model_type)
     return res

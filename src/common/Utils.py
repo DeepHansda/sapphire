@@ -4,32 +4,20 @@ import subprocess
 from random import randint
 from typing import Any, Callable
 
+import common.shared as sharedValues
 import torch
 from common.Folder_Paths import models_dir
 from common.Types import Text_Emmbed_Type
-from diffusers import (
-    DDIMScheduler,
-    DDPMScheduler,
-    DPMSolverMultistepScheduler,
-    DPMSolverSinglestepScheduler,
-    EulerAncestralDiscreteScheduler,
-    EulerDiscreteScheduler,
-    HeunDiscreteScheduler,
-    KDPM2AncestralDiscreteScheduler,
-    KDPM2DiscreteScheduler,
-    LMSDiscreteScheduler,
-    PNDMScheduler,
-    UniPCMultistepScheduler,
-)
-from fastapi import HTTPException
+from fastapi import HTTPException,status
 from PIL import Image
+from torch import Generator
+
+sharedValues = sharedValues.load_shared_values()
+device = sharedValues.get("init_device")
 
 
 class Utils:
     def __init__(self):
-        pass
-
-    def seed_generator(self):
         pass
 
     def get_text_embds(self, args: Text_Emmbed_Type):
@@ -59,44 +47,23 @@ class Utils:
 
         return prompt_embeds, negative_prompt_embeds
 
-    def get_scheduler(
-        self, pipeline: Any, scheduler_name: str, use_kerras: bool = False
-    ):
-
-        scheduler_name = scheduler_name.lower()
-        config = pipeline.scheduler.config
-
-        scheduler_classes = {
-            "eular": EulerDiscreteScheduler,
-            "eular_a": EulerAncestralDiscreteScheduler,
-            "heun": HeunDiscreteScheduler,
-            "lms": LMSDiscreteScheduler,
-            "unipc": UniPCMultistepScheduler,
-            "dpm_2": KDPM2DiscreteScheduler,
-            "dpm_2_a": KDPM2AncestralDiscreteScheduler,
-            "dpmpp_2m": DPMSolverMultistepScheduler,
-            "dpmpp_sde": DPMSolverSinglestepScheduler,
-            "dpmpp_2m_sde": DPMSolverMultistepScheduler,
-        }
-        scheduler_class = scheduler_classes.get(scheduler_name)
-        if scheduler_class:
-            scheduler = scheduler_class.from_config(config)
-            if use_kerras is True:
-                scheduler.use_karras_sigmas = use_kerras
-            return scheduler
-        else:
-            raise ValueError(f"Unsupported scheduler: {scheduler_name}")
-
     def get_byte_img(self, image: Image.Image):
         buf = io.BytesIO()
         image.save(buf, format="PNG")
         byte_img = buf.getvalue()
         return byte_img
 
-    def random_seed(self, n: int) -> int:
-        range_start = 10 ** (n - 1)
-        range_end = (10**n) - 1
-        return randint(range_start, range_end)
+    def seed_handler(self, seed: int) -> (int, Any):
+
+        if seed == -1:
+            n = 10
+            range_start = 10 ** (n - 1)
+            range_end = (10**n) - 1
+            rand_seed = randint(range_start, range_end)
+            seed = rand_seed
+
+        generator = torch.Generator(device=device).manual_seed(seed)
+        return seed, generator
 
     def exception_handler(self, func: Callable[..., Any]) -> Callable:
         async def wrapper(*args, **kwargs):
@@ -104,7 +71,7 @@ class Utils:
                 return await func(*args, **kwargs)
             except Exception as e:
                 # Return the exception as a response
-                raise HTTPException(status_code=500, detail=str(e))
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
         return wrapper
 
