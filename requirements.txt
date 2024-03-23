@@ -5,3 +5,5 @@ transformers
 xformers
 peft
 python-dotenv
+python-multipart
+aiofiles

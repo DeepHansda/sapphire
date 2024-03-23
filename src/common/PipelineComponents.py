@@ -21,15 +21,16 @@ from diffusers import (
 class PipelineComponents:
     def __init__(self):
         self.component_pipeline: StableDiffusionPipeline = None
-        self.sharedValues = sharedValues.load_shared_values()
-        self.device = self.sharedValues.get(INIT_DEVICE)
         self.torch_float = torch.float16
 
+        
+
+    def pipeline_setup(self):
+        self.sharedValues = sharedValues.load_shared_values()
+        self.device = self.sharedValues.get(INIT_DEVICE)
         if self.device == "cpu":
             self.torch_float = torch.float32
             print(self.torch_float)
-
-    def pipeline_setup(self):
         # model_path = "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
         sd_model_path = self.sharedValues.get(CHECKPOINT)
         vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"

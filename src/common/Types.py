@@ -1,23 +1,54 @@
 from typing import Any
-from pydantic import BaseModel
+from fastapi import UploadFile,File,Form
+from pydantic import BaseModel,model_validator
+import json
+from dataclasses import dataclass
 
-class Text2Image_Type(BaseModel):
-    prompt:str
-    negative_prompt:str
-    width:int | int = 512
-    height:int | int = 512
-    scheduler: str
-    steps:int | int = 20
-    use_kerras:bool
-    seed:int   | None = None
-    guidance_scale: float| float = 7.0
-    use_lora:bool
+@dataclass
+class Text2Image_Type:
+    prompt: str = Form(...)
+    negative_prompt: str = Form(...)
+    width: int = Form(512) 
+    height: int = Form(512) 
+    scheduler: str= Form(...)
+    steps: int= Form(20) 
+    use_kerras: bool = Form(False)
+    seed: int = Form(...)
+    guidance_scale: float = Form(7.5)
+    use_lora: bool = Form(False)
+
+    # prompt: str
+    # negative_prompt: str
+    # width: int | int = 512
+    # height: int | int = 512
+    # scheduler: str
+    # steps: int | int = 20
+    # use_kerras: bool | bool = False
+    # seed: int | None = None
+    # guidance_scale: float | float = 7.0
+    # use_lora: bool | bool = False
+
     
-    
+    # @model_validator(mode='before')
+    # @classmethod
+    # def validate_to_json(cls, value: Any) -> Any:
+    #     print(value)
+    #     if isinstance(value, str):
+    #         return cls(**json.loads(value))
+    #     return value
+
+@dataclass
+class Image2Image_Type(Text2Image_Type):
+    image: UploadFile = File(...)
+    s: str = Form(...)
+
+
 class Text_Emmbed_Type(BaseModel):
-    prompt:str
-    negative_prompt:str
-    pipeline:Any
+    prompt: str
+    negative_prompt: str
+    pipeline: Any
+
+
 class Model_Request_Type(BaseModel):
-    model_name:str
-    model_type:str
+    model_name: str
+    model_type: str

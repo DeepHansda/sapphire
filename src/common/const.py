@@ -10,3 +10,6 @@ CLIP_VISION = "clip_vision"
 EMBEDDINGS = "embeddings"
 UNET = "unet"
 UPSCALE_MODELS = "upscale_models"
+INPUT = "input"
+OUTPUT = "output"
+

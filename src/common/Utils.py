@@ -12,13 +12,12 @@ from fastapi import HTTPException,status
 from PIL import Image
 from torch import Generator
 
-sharedValues = sharedValues.load_shared_values()
-device = sharedValues.get("init_device")
+
 
 
 class Utils:
     def __init__(self):
-        pass
+       pass
 
     def get_text_embds(self, args: Text_Emmbed_Type):
         pipe = args.pipeline
@@ -54,7 +53,8 @@ class Utils:
         return byte_img
 
     def seed_handler(self, seed: int) -> (int, Any):
-
+        shared = sharedValues.load_shared_values()
+        device = shared.get("init_device")
         if seed == -1:
             n = 10
             range_start = 10 ** (n - 1)

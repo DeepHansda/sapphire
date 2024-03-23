@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 
 import routes.text2imgRouter as text2imgRouter
 import routes.extraRouter as extraRouter
+import routes.img2imgRouter as img2imgRouter
 import common.Folder_Paths as Folder_Paths
 from common.startup import startUp
 
@@ -17,7 +18,6 @@ folder_path = Folder_Paths.Folder_paths()
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-   
    await startUp()
    yield
    print("stopping")
@@ -25,6 +25,7 @@ async def lifespan(app:FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(extraRouter.extra_router)
 app.include_router(text2imgRouter.router)
+app.include_router(img2imgRouter.img2imgRouter)
 
 
 

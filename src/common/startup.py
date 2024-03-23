@@ -5,13 +5,18 @@ from common.Folder_Paths import add_folders_in_models_folder, models_dir
 from common.shared import save_shared_values
 from common.Utils import Utils
 from common.const import CHECKPOINTS,CHECKPOINT
+from common.Folder_Paths import Folder_paths
+
+
 
 commonUtils = Utils()
-
-
+folder_path = Folder_paths()
 async def startUp():
 
+    print("start up function running")
+
     await set_device()
+    folder_path.add_init_folders()
     add_folders_in_models_folder()
 
     all_models = {}
