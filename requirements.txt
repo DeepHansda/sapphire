@@ -7,3 +7,4 @@ peft
 python-dotenv
 python-multipart
 aiofiles
+autoflake

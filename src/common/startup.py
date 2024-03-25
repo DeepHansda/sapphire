@@ -1,5 +1,3 @@
-import json
-
 from common.devices import set_device
 from common.Folder_Paths import add_folders_in_models_folder, models_dir
 from common.shared import save_shared_values

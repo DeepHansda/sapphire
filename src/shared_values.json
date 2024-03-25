@@ -1,4 +1,4 @@
 {
     "init_device": "cuda",
-    "checkpoint": "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
+    "checkpoint": "/kaggle/working/sapphire/src/models/checkpoints/DreamShaper_8_pruned.safetensors"
 }

@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 import torch
 from common.shared import save_shared_values

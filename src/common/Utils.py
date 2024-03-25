@@ -10,7 +10,6 @@ from common.Folder_Paths import models_dir
 from common.Types import Text_Emmbed_Type
 from fastapi import HTTPException,status
 from PIL import Image
-from torch import Generator
 
 
 
@@ -128,3 +127,15 @@ class Utils:
                 )
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def generate_grid_size(self,total_number:int) -> (int,int):
+
+        import math
+            
+        grid_size = math.sqrt(total_number)
+            
+        rows = math.ceil(grid_size)
+        cols = math.ceil(total_number / rows)
+            
+        return rows, cols
+

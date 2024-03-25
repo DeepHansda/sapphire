@@ -40,7 +40,9 @@ class Img2ImgControllers:
 
         pipeline.scheduler = scheduler
 
-        in_image = Image.open(BytesIO(req.image.file.read())).convert("RGB")
+        in_image:Image.Image = Image.open((img_path),mode="r")
+        in_image.tobytes("xbm", "rgb")
+        print(in_image.size)
         image: Image.Image = pipeline(
             prompt=prompt,
             image = in_image,
@@ -50,10 +52,10 @@ class Img2ImgControllers:
             generator=generator,
             guidance_scale=guidance_scale,
             num_inference_steps=steps,
-            strength = 0.75
+            strength = 0.65
         ).images[0]
 
-        byte_img = self.diff_utils.get_byte_img(image)
+        byte_img = diff_utils.get_byte_img(image)
 
         return Response(content=byte_img, media_type="image/png")
         

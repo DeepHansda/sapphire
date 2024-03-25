@@ -1,7 +1,6 @@
 from typing import Any
 from fastapi import UploadFile,File,Form
-from pydantic import BaseModel,model_validator
-import json
+from pydantic import BaseModel
 from dataclasses import dataclass
 
 @dataclass
@@ -16,6 +15,7 @@ class Text2Image_Type:
     seed: int = Form(...)
     guidance_scale: float = Form(7.5)
     use_lora: bool = Form(False)
+    batch_size:int = Form(1)
 
     # prompt: str
     # negative_prompt: str
