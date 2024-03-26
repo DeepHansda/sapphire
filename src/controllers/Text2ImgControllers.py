@@ -1,14 +1,12 @@
-from fastapi.responses import Response
-from diffusers import AutoPipelineForText2Image
-from diffusers.pipelines.stable_diffusion.pipeline_output import StableDiffusionPipelineOutput
-from diffusers.utils import make_image_grid
-from common.PipelineComponents import PipelineComponents
-
-
-from PIL import Image
-from common.Types import Text2Image_Type
 import common.shared as sharedValues
+from common.PipelineComponents import PipelineComponents
+from common.Types import Text2Image_Type
 from common.Utils import Utils
+from diffusers import AutoPipelineForText2Image
+from diffusers.pipelines.stable_diffusion.pipeline_output import \
+    StableDiffusionPipelineOutput
+from fastapi.responses import Response
+from PIL import Image
 
 
 class Text2ImgControllers:
@@ -53,7 +51,7 @@ class Text2ImgControllers:
         #     self.pipeline.unload_lora_weights()
         # print(self.pipeline.scheduler)
 
-        result:StableDiffusionPipelineOutput = pipeline(
+        result: StableDiffusionPipelineOutput = pipeline(
             prompt=prompt,
             negative_prompt=negative_prompt,
             width=width,
@@ -63,17 +61,8 @@ class Text2ImgControllers:
             num_inference_steps=steps,
             num_images_per_prompt=req.batch_size,
         )
-        images_length = len(result.images)
-        print(type(result))
-        print(images_length)
 
-        result_images = ""
-        if images_length > 1 :
-            rows,cols =self.diff_utils.generate_grid_size(images_length)
-            result_images = make_image_grid(result.images,rows=rows,cols=cols)
-        else:
-            result_images = result.images[0]   
-        byte_img = self.diff_utils.get_byte_img(result_images)
+        byte_img = self.diff_utils.handle_generated_images(result.images)
 
         return Response(content=byte_img, media_type="image/png")
 

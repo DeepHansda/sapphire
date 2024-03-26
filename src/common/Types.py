@@ -1,21 +1,22 @@
 from typing import Any
-from fastapi import UploadFile,File,Form
+from fastapi import UploadFile, File, Form
 from pydantic import BaseModel
 from dataclasses import dataclass
+
 
 @dataclass
 class Text2Image_Type:
     prompt: str = Form(...)
     negative_prompt: str = Form(...)
-    width: int = Form(512) 
-    height: int = Form(512) 
-    scheduler: str= Form(...)
-    steps: int= Form(20) 
+    width: int = Form(512)
+    height: int = Form(512)
+    scheduler: str = Form(...)
+    steps: int = Form(20)
     use_kerras: bool = Form(False)
     seed: int = Form(...)
     guidance_scale: float = Form(7.5)
     use_lora: bool = Form(False)
-    batch_size:int = Form(1)
+    batch_size: int = Form(1)
 
     # prompt: str
     # negative_prompt: str
@@ -28,7 +29,6 @@ class Text2Image_Type:
     # guidance_scale: float | float = 7.0
     # use_lora: bool | bool = False
 
-    
     # @model_validator(mode='before')
     # @classmethod
     # def validate_to_json(cls, value: Any) -> Any:
@@ -37,10 +37,10 @@ class Text2Image_Type:
     #         return cls(**json.loads(value))
     #     return value
 
+
 @dataclass
 class Image2Image_Type(Text2Image_Type):
     image: UploadFile = File(...)
-    s: str = Form(...)
 
 
 class Text_Emmbed_Type(BaseModel):

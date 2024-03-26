@@ -1,22 +1,24 @@
 import io
 import os
 import subprocess
+from datetime import date
 from random import randint
-from typing import Any, Callable
+from typing import Any, Callable, List
 
 import common.shared as sharedValues
 import torch
-from common.Folder_Paths import models_dir
+from common.const import OUTPUT
+from common.Folder_Paths import cwd, models_dir
 from common.Types import Text_Emmbed_Type
-from fastapi import HTTPException,status
+from diffusers.utils import make_image_grid
+from fastapi import HTTPException, status
 from PIL import Image
-
-
 
 
 class Utils:
     def __init__(self):
-       pass
+
+        pass
 
     def get_text_embds(self, args: Text_Emmbed_Type):
         pipe = args.pipeline
@@ -45,10 +47,11 @@ class Utils:
 
         return prompt_embeds, negative_prompt_embeds
 
-    def get_byte_img(self, image: Image.Image):
+    def get_byte_img(self, image: Image.Image) -> bytes:
         buf = io.BytesIO()
         image.save(buf, format="PNG")
         byte_img = buf.getvalue()
+        print(type(byte_img))
         return byte_img
 
     def seed_handler(self, seed: int) -> (int, Any):
@@ -70,7 +73,9 @@ class Utils:
                 return await func(*args, **kwargs)
             except Exception as e:
                 # Return the exception as a response
-                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail=str(e)
+                )
 
         return wrapper
 
@@ -128,14 +133,36 @@ class Utils:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def generate_grid_size(self,total_number:int) -> (int,int):
+    def generate_grid_size(self, total_number: int) -> (int, int):
 
         import math
-            
+
         grid_size = math.sqrt(total_number)
-            
+
         rows = math.ceil(grid_size)
         cols = math.ceil(total_number / rows)
-            
+
         return rows, cols
 
+    def handle_generated_images(self, images: List[Image.Image]) -> bytes:
+        output_path = os.path.join(cwd, OUTPUT)
+        today = date.today()
+        file_count_in_output = len(os.listdir(output_path))
+
+        for index, image in enumerate(images):
+            index = file_count_in_output + index
+            img_name = f"{OUTPUT}_{index}_{today}.png"
+            with open(f"{output_path}/{img_name}", "wb") as img:
+                image.save(img, format="PNG")
+
+        images_length = len(images)
+
+        result_images = ""
+        if images_length > 1:
+            rows, cols = self.generate_grid_size(images_length)
+            result_images = make_image_grid(images, rows=rows, cols=cols)
+        else:
+            result_images = images[0]
+
+        byte_img = self.get_byte_img(result_images)
+        return byte_img
