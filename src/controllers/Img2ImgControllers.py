@@ -35,6 +35,7 @@ class Img2ImgControllers:
         height = req.height
         steps = req.steps
         guidance_scale = req.guidance_scale
+        strength = req.strength
         scheduler = self.pipeline_components.get_scheduler(
             req.scheduler, req.use_kerras
         )
@@ -45,7 +46,7 @@ class Img2ImgControllers:
         pipeline.scheduler = scheduler
 
         in_image: Image.Image = Image.open((img_path), mode="r")
-        in_image.resize(size=(width, height))
+        in_image = in_image.resize((width, height)).rotate(90)
         in_image.tobytes("xbm", "rgb")
         print(in_image.size)
         result: StableDiffusionPipelineOutput = pipeline(
@@ -57,7 +58,7 @@ class Img2ImgControllers:
             generator=generator,
             guidance_scale=guidance_scale,
             num_inference_steps=steps,
-            strength=0.65,
+            strength=strength,
             num_images_per_prompt=req.batch_size,
             
         )

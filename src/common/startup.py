@@ -1,6 +1,6 @@
 from common.devices import set_device
 from common.Folder_Paths import add_folders_in_models_folder, models_dir
-from common.shared import save_shared_values
+from common.shared import save_shared_values,load_shared_values
 from common.Utils import Utils
 from common.const import CHECKPOINTS,CHECKPOINT
 from common.Folder_Paths import Folder_paths
@@ -24,12 +24,13 @@ async def startUp():
         output_path = models_dir + "/checkpoints/v1-5-pruned-emaonly.safetensors"
         await commonUtils.download_with_wget(url, output_path)
         all_models = commonUtils.get_all_models()
-
+    
     default_checkpoint = {}
+    # shard_values = 
+    if not load_shared_values()[CHECKPOINT]:
+        checkpoint_name, checkpoint_path = next(
+            iter(all_models.get(CHECKPOINTS, {}).items()), (None, None)
+        )
+        default_checkpoint[CHECKPOINT] = checkpoint_path
 
-    checkpoint_name, checkpoint_path = next(
-        iter(all_models.get(CHECKPOINTS, {}).items()), (None, None)
-    )
-    default_checkpoint[CHECKPOINT] = checkpoint_path
-
-    save_shared_values(default_checkpoint)
+        save_shared_values(default_checkpoint)

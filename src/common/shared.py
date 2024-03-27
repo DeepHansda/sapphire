@@ -22,7 +22,7 @@ def save_shared_values(shared_values: Dict[str, str]):
     with open(file_path, "w") as f:
         json.dump(shared_values, f, indent=4)
 
-def load_shared_values():
+def load_shared_values() -> json:
     file_path = "shared_values.json"
 
     # Check if the file exists

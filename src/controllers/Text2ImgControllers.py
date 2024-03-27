@@ -5,8 +5,9 @@ from common.Utils import Utils
 from diffusers import AutoPipelineForText2Image
 from diffusers.pipelines.stable_diffusion.pipeline_output import \
     StableDiffusionPipelineOutput
-from fastapi.responses import Response
+from fastapi.responses import Response,JSONResponse
 from PIL import Image
+import json,base64
 
 
 class Text2ImgControllers:
@@ -62,9 +63,21 @@ class Text2ImgControllers:
             num_images_per_prompt=req.batch_size,
         )
 
+        additional_data = {"message": "Additional data along with image","width":width,"height":height}
         byte_img = self.diff_utils.handle_generated_images(result.images)
+        # return {"image":byte_img.decode("base64"),"data":additional_data}
+        # response = Response(content=byte_img, media_type="image/png")
+        additional_data_json = json.dumps(additional_data)
+        byte_img_base64 = base64.b64encode(byte_img).decode("utf-8")
 
-        return Response(content=byte_img, media_type="image/png")
+    # Creating a JSON response with image bytes and additional data
+        response_data = {
+            "image":byte_img_base64,  # Assuming byte_img is converted to base64 string
+            "additional_data": additional_data_json
+        }
+
+        return JSONResponse(content=response_data)
+        # return response ,additional_data
 
     # except Exception as e:
     #     print(e)

@@ -40,6 +40,7 @@ class Text2Image_Type:
 
 @dataclass
 class Image2Image_Type(Text2Image_Type):
+    strength:float = Form(...)
     image: UploadFile = File(...)
 
 
