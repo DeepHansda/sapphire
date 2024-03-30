@@ -27,8 +27,7 @@ def add_folders_in_models_folder():
 class Folder_paths:
 
     def __init__(self):
-        print(base_path)
-        print(models_dir)
+        pass
 
     def add_folder_in_cwd(self, folder_name: str):
         folder_path = os.path.join(cwd, folder_name)

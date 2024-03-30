@@ -20,7 +20,6 @@ async def update_shared_values(shared_values: Dict[str, str]):
 
 @extra_router.get("/get-models/{model_type}")
 async def get_models(model_type: Annotated[str, Path(title="to get the models")]):
-    print(model_type)
     res = await modelsController.get_models(model_type)
     return res
 

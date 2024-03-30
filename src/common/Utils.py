@@ -1,5 +1,7 @@
+import asyncio
 import io
-import os
+import os,json
+import base64
 import subprocess
 from datetime import date
 from random import randint
@@ -13,6 +15,8 @@ from common.Types import Text_Emmbed_Type
 from diffusers.utils import make_image_grid
 from fastapi import HTTPException, status
 from PIL import Image
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
 
 
 class Utils:
@@ -144,11 +148,18 @@ class Utils:
 
         return rows, cols
 
-    def handle_generated_images(self, images: List[Image.Image]) -> bytes:
-        output_path = os.path.join(cwd, OUTPUT)
-        today = date.today()
-        file_count_in_output = len(os.listdir(output_path))
+    def byte_img_to_base64(self, byte_img: bytes) -> str:
+        byte_img_base64 = base64.b64encode(byte_img).decode("utf-8")
+        return byte_img_base64
 
+    def handle_generated_images(self, images: List[Image.Image], base64_for_img:bool) -> Any:
+        today = date.today()
+        as_path = f"{OUTPUT}/{today}"
+        output_path = os.path.join(cwd, as_path)
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        file_count_in_output = len(os.listdir(output_path))
+        print(images)
         for index, image in enumerate(images):
             index = file_count_in_output + index
             img_name = f"{OUTPUT}_{index}_{today}.png"
@@ -159,10 +170,73 @@ class Utils:
 
         result_images = ""
         if images_length > 1:
+            byte_imgs_list = []
             rows, cols = self.generate_grid_size(images_length)
+
+            for index, img in enumerate(images):
+                byte_img = self.get_byte_img(img)
+                byte_imgs_list.append(byte_img)
             result_images = make_image_grid(images, rows=rows, cols=cols)
+            byte_img = self.get_byte_img(result_images)
+
+            if base64_for_img is True:
+                byte_imgs_list_base64 = []
+                byte_img_base64 = self.byte_img_to_base64(byte_img)
+
+                for b_i in byte_imgs_list:
+                    b_i_base64 = self.byte_img_to_base64(b_i)
+                    byte_imgs_list_base64.append(b_i_base64)
+
+                return json.dumps({"imgs_list":byte_imgs_list_base64, "img":byte_img_base64})
+
+            return byte_imgs_list, byte_img
         else:
             result_images = images[0]
+            byte_img = self.get_byte_img(result_images)
+            if base64_for_img is True:
+                byte_img_base64 = self.byte_img_to_base64(byte_img)
+                return byte_img_base64
+            return byte_img
 
-        byte_img = self.get_byte_img(result_images)
-        return byte_img
+    async def watch_shared_values_changes(
+        self, file_path: str, functions_to_call: List[Callable]
+    ):
+        async for changes in awatch(file_path):
+            print(f"File {file_path} changed")
+            # Call each function in the list when file changes occur
+            for func in functions_to_call:
+                await func()
+
+
+class FileChangeHandler(FileSystemEventHandler):
+    def __init__(self, functions_to_call, file_path):
+        super().__init__()
+        self.functions_to_call = functions_to_call
+        self.file_path = file_path
+
+    async def on_modified(self, event):
+        if event.is_directory:
+            return
+        if event.src_path != self.file_path:
+            return
+            print(f"File {event.src_path} changed")
+        # Call each function in the list when file changes occur
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:  # 'RuntimeError: There is no current event loop...'
+            loop = None
+        for func in self.functions_to_call:
+            if loop and loop.is_running():
+                task = loop.run_until_complete(func())
+                print("fusfdsdkfjdkl;fkl")
+                task.add_done_callback(
+                    lambda t: print(
+                        f"Task done with result={t.result()}  << return val of main()"
+                    )
+                )
+
+            else:
+                print("Starting new event loop")
+                result = asyncio.run(startUp())
+                print(result)
+                # await asyncio.sleep(5)

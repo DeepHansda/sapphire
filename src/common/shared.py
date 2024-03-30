@@ -3,7 +3,6 @@ import os
 from typing import Dict
 
 
-
 # Save file names to the configuration file
 def save_shared_values(shared_values: Dict[str, str]):
     file_path = "shared_values.json"
@@ -22,7 +21,8 @@ def save_shared_values(shared_values: Dict[str, str]):
     with open(file_path, "w") as f:
         json.dump(shared_values, f, indent=4)
 
-def load_shared_values() -> json:
+
+def load_shared_values() -> dict:
     file_path = "shared_values.json"
 
     # Check if the file exists
@@ -36,6 +36,7 @@ def load_shared_values() -> json:
     #         json.dump({}, f)
     #     # Return an empty dictionary
     #     return {}
+
 
 async def retrive_shared_values(shared_values: Dict[str, str]):
     existing_shared_values = load_shared_values()

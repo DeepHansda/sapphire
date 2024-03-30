@@ -8,3 +8,5 @@ python-dotenv
 python-multipart
 aiofiles
 autoflake
+watchdog
+asyncio

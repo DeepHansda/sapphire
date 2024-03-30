@@ -1,3 +1,6 @@
+import base64
+import json
+
 import common.shared as sharedValues
 from common.PipelineComponents import PipelineComponents
 from common.Types import Text2Image_Type
@@ -5,9 +8,9 @@ from common.Utils import Utils
 from diffusers import AutoPipelineForText2Image
 from diffusers.pipelines.stable_diffusion.pipeline_output import \
     StableDiffusionPipelineOutput
-from fastapi.responses import Response,JSONResponse
+from fastapi import status
+from fastapi.responses import JSONResponse, Response
 from PIL import Image
-import json,base64
 
 
 class Text2ImgControllers:
@@ -29,6 +32,7 @@ class Text2ImgControllers:
         height = req.height
         steps = req.steps
         guidance_scale = req.guidance_scale
+        batch_size = req.batch_size
         scheduler = self.pipeline_components.get_scheduler(
             req.scheduler, req.use_kerras
         )
@@ -60,24 +64,32 @@ class Text2ImgControllers:
             generator=generator,
             guidance_scale=guidance_scale,
             num_inference_steps=steps,
-            num_images_per_prompt=req.batch_size,
+            num_images_per_prompt=batch_size,
         )
 
-        additional_data = {"message": "Additional data along with image","width":width,"height":height}
-        byte_img = self.diff_utils.handle_generated_images(result.images)
-        # return {"image":byte_img.decode("base64"),"data":additional_data}
-        # response = Response(content=byte_img, media_type="image/png")
-        additional_data_json = json.dumps(additional_data)
-        byte_img_base64 = base64.b64encode(byte_img).decode("utf-8")
+        
+        additional_data = {
+            "message": "Additional data along with image",
+            "width": width,
+            "height": height,
+            "seed": seed,
+            "steps": steps,
+            "scheduler": req.scheduler,
+            "guidance_scale": guidance_scale,
+            "num_inference_steps": steps,
+            "batch_size": batch_size,
+        }
+        img_data_json = self.diff_utils.handle_generated_images(result.images,base64_for_img=True)
 
-    # Creating a JSON response with image bytes and additional data
+        additional_data_json = json.dumps(additional_data)
+
+        # Creating a JSON response with image bytes and additional data
         response_data = {
-            "image":byte_img_base64,  # Assuming byte_img is converted to base64 string
-            "additional_data": additional_data_json
+            "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
+            "additional_data": additional_data_json,
         }
 
-        return JSONResponse(content=response_data)
-        # return response ,additional_data
+        return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
 
     # except Exception as e:
     #     print(e)

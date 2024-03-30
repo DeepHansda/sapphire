@@ -27,7 +27,7 @@ class PipelineComponents:
 
     def pipeline_setup(self):
         self.sharedValues = sharedValues.load_shared_values()
-        self.device = self.sharedValues.get(INIT_DEVICE)
+        self.device = self.sharedValues.get(INIT_DEVICE,"cpu")
         if self.device == "cpu":
             self.torch_float = torch.float32
             print(self.torch_float)

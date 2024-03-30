@@ -1,5 +1,5 @@
 from io import BytesIO
-
+from fastapi import status
 import aiofiles
 from common.const import INPUT, OUTPUT
 from common.Folder_Paths import cwd
@@ -9,8 +9,9 @@ from common.Utils import Utils
 from diffusers import AutoPipelineForImage2Image
 from diffusers.pipelines.stable_diffusion.pipeline_output import \
     StableDiffusionPipelineOutput
-from fastapi.responses import Response
-from PIL import Image
+from fastapi.responses import Response,StreamingResponse,JSONResponse
+from PIL import Image,ImageOps
+import json
 
 diff_utils = Utils()
 
@@ -36,6 +37,7 @@ class Img2ImgControllers:
         steps = req.steps
         guidance_scale = req.guidance_scale
         strength = req.strength
+        batch_size = req.batch_size
         scheduler = self.pipeline_components.get_scheduler(
             req.scheduler, req.use_kerras
         )
@@ -44,9 +46,11 @@ class Img2ImgControllers:
         print(seed)
 
         pipeline.scheduler = scheduler
-
+        img_size = (width, height)
         in_image: Image.Image = Image.open((img_path), mode="r")
-        in_image = in_image.resize((width, height)).rotate(90)
+        in_image = ImageOps.exif_transpose(in_image)
+        # in_image = in_image.resize((width, height))
+        in_image = ImageOps.fit(in_image,img_size)
         in_image.tobytes("xbm", "rgb")
         print(in_image.size)
         result: StableDiffusionPipelineOutput = pipeline(
@@ -59,10 +63,29 @@ class Img2ImgControllers:
             guidance_scale=guidance_scale,
             num_inference_steps=steps,
             strength=strength,
-            num_images_per_prompt=req.batch_size,
+            num_images_per_prompt=batch_size
             
         )
+        additional_data = {
+            "message": "Additional data along with image",
+            "width": width,
+            "height": height,
+            "seed": seed,
+            "steps": steps,
+            "scheduler": req.scheduler,
+            "guidance_scale": guidance_scale,
+            "num_inference_steps": steps,
+            "batch_size": batch_size,
+        }
 
-        byte_img = diff_utils.handle_generated_images(result.images)
+        img_data_json = diff_utils.handle_generated_images(result.images,base64_for_img=True)
 
-        return Response(content=byte_img, media_type="image/png")
+        additional_data_json = json.dumps(additional_data)
+
+        # Creating a JSON response with image bytes and additional data
+        response_data = {
+            "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
+            "additional_data": additional_data_json,
+        }
+
+        return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
