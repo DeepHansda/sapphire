@@ -1,6 +1,7 @@
 import json
 import os
 import uvicorn
+import torch,gc
 
 from common.Folder_Paths import models_dir, Folder_paths
 from common.Utils import Utils
@@ -9,6 +10,9 @@ from common.PipelineComponents import PipelineComponents
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from common.const import CHECKPOINT,CHECKPOINTS,LORAS,LORA
+from controllers.Img2ImgControllers import Img2ImgControllers
+from controllers.Text2ImgControllers import Text2ImgControllers
+
 
 commonUtils = Utils()
 folder_paths = Folder_paths()
@@ -67,8 +71,14 @@ class ModelsController:
         if model_type == LORAS:
             model_type = LORA
         model[model_type] = path
+        device = pipelineComponents.device
         save_shared_values(model)
+        gc.collect()
+        if device == "cuda":
+            torch.cuda.empty_cache()
         pipelineComponents.pipeline_setup()
+        Text2ImgControllers()
+        Img2ImgControllers()
 
         return JSONResponse(
             status_code=status.HTTP_200_OK,

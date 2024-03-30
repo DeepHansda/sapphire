@@ -79,7 +79,7 @@ class Text2ImgControllers:
             "num_inference_steps": steps,
             "batch_size": batch_size,
         }
-        img_data_json = self.diff_utils.handle_generated_images(result.images,base64_for_img=True)
+        img_data_json = self.diff_utils.handle_generated_images(result.images,base64_for_img=False)
 
         additional_data_json = json.dumps(additional_data)
 
@@ -88,8 +88,8 @@ class Text2ImgControllers:
             "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
             "additional_data": additional_data_json,
         }
-
-        return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+        return Response(content=img_data_json,media_type="image/png")
+        # return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
 
     # except Exception as e:
     #     print(e)
