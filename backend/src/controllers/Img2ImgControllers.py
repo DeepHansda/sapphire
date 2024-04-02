@@ -78,14 +78,19 @@ class Img2ImgControllers:
             "batch_size": batch_size,
         }
 
-        img_data_json = diff_utils.handle_generated_images(result.images,base64_for_img=True)
 
-        additional_data_json = json.dumps(additional_data)
+        if req.want_enc_imgs:
+            img_data_json = diff_utils.handle_generated_images(result.images,base64_for_img=True)
+
+            additional_data_json = json.dumps(additional_data)
 
         # Creating a JSON response with image bytes and additional data
-        response_data = {
-            "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
-            "additional_data": additional_data_json,
-        }
+            response_data = {
+                "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
+                "additional_data": additional_data_json,
+            }
 
-        return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+            return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+        img_data_json = diff_utils.handle_generated_images(result.images,base64_for_img=False)
+        return Response(content=img_data_json,media_type="image/png")
+

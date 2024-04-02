@@ -17,6 +17,7 @@ class Text2Image_Type:
     guidance_scale: float = Form(7.5)
     use_lora: bool = Form(False)
     batch_size: int = Form(1)
+    want_enc_imgs:bool = Form(False)
 
     # prompt: str
     # negative_prompt: str

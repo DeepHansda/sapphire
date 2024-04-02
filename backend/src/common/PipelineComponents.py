@@ -31,9 +31,9 @@ class PipelineComponents:
         if self.device == "cpu":
             self.torch_float = torch.float32
             print(self.torch_float)
-        # model_path = "/kaggle/working/sapphire/src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
+        # model_path = "/kaggle/working/sapphire//src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
         sd_model_path = self.sharedValues.get(CHECKPOINT)
-        vae_path = "/kaggle/working/sapphire/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+        vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
         if vae_path:
             vae = AutoencoderKL.from_single_file(
                 vae_path, torch_dtype=self.torch_float

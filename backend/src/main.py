@@ -9,12 +9,12 @@ from fastapi import FastAPI
 from fastapi.requests import Request
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
-# from common.PipelineComponents import PipelineComponents
+from common.PipelineComponents import PipelineComponents
 from common.Utils import FileChangeHandler
 # t2ImgControllers = Text2ImgControllers()
 folder_path = Folder_Paths.Folder_paths()
 # commonUtils = Utils()
-# pipeline_components = PipelineComponents()
+pipeline_components = PipelineComponents()
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -68,7 +68,7 @@ async def lifespan(app: FastAPI):
    print("Observer stopped.")
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 
 print("wosdfsfsdf")
