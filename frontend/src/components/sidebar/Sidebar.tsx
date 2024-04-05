@@ -19,7 +19,7 @@ const schedulers = [
 export default function Sidebar() {
     return (
         <div className='w-auto h-screen '>
-            <ScrollShadow size={80} offset={10} orientation='vertical' className='w-[300px] max-h-screen border-1 border-white p-6'>
+            <ScrollShadow size={80} offset={10} orientation='vertical' className='w-[300px] max-h-screen  p-6'>
                 <div className=' '>
                     <div>
                         <div className='flex flex-col gap-y-6'>
