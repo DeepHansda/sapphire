@@ -13,17 +13,19 @@ export default function MainLayout({ children }: {
     <NextUIProvider>
       <div className="flex" >
         <Sidebar />
-        <ScrollShadow size={60}  offset={40} className='w-full max-h-screen p-6 relative'>
+        <ScrollShadow size={60} offset={40} className='scrollbar-thin scrollbar-thumb-rounded-[100%] w-full max-h-screen p-6 relative'>
           <div className='fixed'>
 
-          <Navbar />
+            <Navbar />
           </div>
-          <div className='mt-32 h-[2000px]'>
-            <div className=''>
+          <div className='mt-32'>
 
-          <PromptBox/>
-          {children}
+
+            <PromptBox />
+            <div>
+              {children}
             </div>
+
           </div>
         </ScrollShadow>
       </div>

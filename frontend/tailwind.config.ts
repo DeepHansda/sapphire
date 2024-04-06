@@ -26,6 +26,7 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [
+    require('tailwind-scrollbar')({ nocompatible: true }),
     nextui({
       prefix: "nextui", // prefix for themes variables
       addCommonColors: true, // override common colors (e.g. "blue", "green", "pink").

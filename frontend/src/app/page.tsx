@@ -1,9 +1,9 @@
-import Image from "next/image";
+import ImageGallery from "@/components/imageGallery/ImageGallery";
 
 export default function Home() {
   return (
-    <main>
-      <h1>hello world</h1>
+    <main className="w-full h-auto">
+      <ImageGallery/>
     </main>
   );
 }
