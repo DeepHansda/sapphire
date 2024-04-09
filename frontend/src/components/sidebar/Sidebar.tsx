@@ -1,6 +1,9 @@
-import { Button, Chip, Divider, Input, ScrollShadow, Select, SelectItem, Slider, Switch } from '@nextui-org/react'
-import React from 'react'
+import { Button, Divider, Input, ScrollShadow, Select, SelectItem, Slider, Switch } from '@nextui-org/react'
+import { useContext } from 'react'
 import SidebarTitle from './components/SidebarTitle'
+
+import { AppContext } from '@/lib/AppContext'
+
 
 const num_of_imgs_list = [1, 2, 3, 4, 5, 6, 7, 8]
 const schedulers = [
@@ -17,6 +20,9 @@ const schedulers = [
 ]
 
 export default function Sidebar() {
+    const { formDataState, handleFormState } = useContext(AppContext)
+    console.log(formDataState)
+
     return (
         <div className='w-auto h-screen '>
             <ScrollShadow size={80} offset={10} orientation='vertical' className='w-[300px] max-h-screen scrollbar-thin  p-6'>
@@ -31,10 +37,20 @@ export default function Sidebar() {
                                     label="Width"
                                     maxValue={2048}
                                     minValue={256}
-                                    defaultValue={512}
+                                    defaultValue={formDataState?.width}
                                     className="max-w-sm"
+                                    value={formDataState?.width}
+                                    onChange={(e) => handleFormState({ width: e })}
+
+
                                 />
-                                <Input variant='bordered' size='sm' type='number' placeholder='width' color='primary' />
+                                <Input
+                                    variant='bordered'
+                                    size='sm' type='number'
+                                    placeholder='width' color='primary'
+                                    defaultValue={formDataState?.width.toString()}
+                                    value={formDataState?.width.toString()}
+                                    onValueChange={(e) => handleFormState({ width: e })} />
                             </div>
 
                             <div className='flex flex-col gap-y-2'>
@@ -44,10 +60,21 @@ export default function Sidebar() {
                                     label="Height"
                                     maxValue={2048}
                                     minValue={256}
-                                    defaultValue={512}
+                                    defaultValue={formDataState?.height}
+                                    value={formDataState?.height}
+                                    onChange={(e) => handleFormState({ height: e })}
                                     className="max-w-sm"
+
                                 />
-                                <Input variant='bordered' size='sm' type='number' placeholder='height' color='primary' />
+                                <Input
+                                    variant='bordered'
+                                    size='sm' type='number'
+                                    placeholder='height'
+                                    color='primary'
+                                    name='height'
+                                    defaultValue={formDataState?.height.toString()}
+                                    value={formDataState?.height.toString()}
+                                    onValueChange={(e) => handleFormState({ height: e })} />
 
                             </div>
                         </div>
@@ -60,7 +87,15 @@ export default function Sidebar() {
                             <div>
                                 <div className='flex flex-wrap gap-4'>
                                     {num_of_imgs_list.map((num, index) => (
-                                        <Button color='primary' size='sm' variant='ghost' key={index}>{num}</Button>
+                                        <Button
+                                            color='primary'
+                                            size='sm'
+                                            variant='ghost'
+                                            key={index}
+                                            className={`${formDataState.batch_size == num ? "bg-yellow_green text-black" : ""}`}
+                                            onClick={(e) => handleFormState({ batch_size: num })}>
+                                            {num}
+                                        </Button>
                                     )
                                     )}
                                 </div>
@@ -79,10 +114,20 @@ export default function Sidebar() {
                                     maxValue={30}
                                     minValue={0}
                                     step={0.01}
-                                    defaultValue={7.5}
+                                    defaultValue={formDataState?.guidance_scale}
+                                    value={formDataState?.guidance_scale}
+                                    onChange={(e) => handleFormState({ guidance_scale: e })}
                                     className="max-w-sm"
                                 />
-                                <Input variant='bordered' step={0.01} size='sm' type="number" placeholder='Guidance Scale' color='primary' />
+                                <Input
+                                    variant='bordered'
+                                    size='sm'
+                                    type="number"
+                                    step={0.01}
+                                    placeholder='Guidance Scale'
+                                    color='primary' defaultValue={formDataState.guidance_scale.toString()}
+                                    value={formDataState?.guidance_scale?.toString()}
+                                    onChange={(e) => handleFormState({ guidance_scale: e.target.value })} />
                             </div>
                         </div>
 
@@ -90,23 +135,23 @@ export default function Sidebar() {
                         <div className='flex flex-col gap-y-6'>
                             <SidebarTitle title="schedulers" />
                             <div className='font-poppins'>
-                                <Select size='sm' label="Select Scheduler" variant='bordered' color='primary'>
+                                <Select size='sm' label="Select Scheduler" variant='bordered' color='primary' onChange={(e) => handleFormState({ scheduler: e.target.value })}>
                                     {
                                         schedulers.map((scheduler, index) => (
 
-                                            <SelectItem title={scheduler} value={scheduler} key={index} />
+                                            <SelectItem title={scheduler} value={scheduler} key={scheduler} />
                                         ))
                                     }
                                 </Select>
-                                <Switch defaultSelected size="sm" className='mt-4'>Use Kerras</Switch>
+                                <Switch defaultSelected size="sm" className='mt-4' isSelected={formDataState.use_kerras} onValueChange={(e) => handleFormState({ use_kerras: e })}>Use Kerras</Switch>
                             </div>
                         </div>
                         <Divider className='my-6' />
                         <div className='flex flex-col gap-y-6'>
                             <SidebarTitle title="seed" />
                             <div className='font-poppins'>
-                                <Input variant='bordered' size='sm' type='number' placeholder='Seed' color='primary' />
-                                <Switch defaultSelected size="sm" className='mt-4'>Fixed Seed</Switch>
+                                <Input variant='bordered' size='sm' type='number' placeholder='Seed' color='primary' defaultValue={formDataState.seed.toString()} onChange={(e) => handleFormState({ seed: e.target.value })} />
+                                <Switch defaultSelected size="sm" className='mt-4' isSelected={formDataState.fixed_seed} onValueChange={(e) => handleFormState({ fixed_seed: e })}>Fixed Seed</Switch>
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ export default function ImgWithButton() {
                         radius='sm'
                     />
                 </div>
-                <div className='absolute z-10 top-0 [&_button]: bg-transparent'>
+                <div className='absolute z-10 bottom-4 right-4 [&>button]: bg-transparent'>
                     <Button isIconOnly className='bg-transparent'>
                         <BiDownArrowCircle size={20} />
                     </Button>
