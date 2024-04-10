@@ -170,7 +170,7 @@ class Utils:
         file_count_in_output = len(os.listdir(output_path))
         print(images)
         for index, image in enumerate(images):
-            index = file_count_in_output + index
+            index = int(file_count_in_output/2) + index
             file_name = f"{OUTPUT}_{index}_{today}"
             if metaData is not None:
                 with open(f"{output_path}/{file_name}.json", "wb") as metaJson:

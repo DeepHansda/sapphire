@@ -80,7 +80,7 @@ class Img2ImgControllers:
             "num_inference_steps": steps,
             "batch_size": batch_size,
         }
-
+        images_length = len(result.images)
         if req.want_enc_imgs:
             img_data_json = diff_utils.handle_generated_images(
                 result.images,
@@ -98,7 +98,24 @@ class Img2ImgControllers:
             }
 
             return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+
+        if images_length > 1:
+            byte_imgs_list, byte_img = diff_utils.handle_generated_images(
+                result.images,
+                metaData=additional_data,
+                base64_for_img=False,
+                tag=IMG2IMG_TAG
+            )
+            if images_length > 4:
+                return StreamingResponse(
+                    content=(img for img in byte_imgs_list), media_type="image/png"
+                )
+
+            return Response(content=byte_img, media_type="image/png")
         img_data_json = diff_utils.handle_generated_images(
-            result.images, metaData=None, base64_for_img=False, tag=IMG2IMG_TAG
+            result.images,
+            metaData=additional_data,
+            base64_for_img=False,
+            tag=IMG2IMG_TAG,
         )
         return Response(content=img_data_json, media_type="image/png")
