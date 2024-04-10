@@ -4,6 +4,7 @@ import uvicorn
 import common.Folder_Paths as Folder_Paths
 import logging,os,time
 from common.startup import startUp
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI
 from fastapi.requests import Request
@@ -11,6 +12,7 @@ from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 from common.PipelineComponents import PipelineComponents
 from common.Utils import FileChangeHandler
+
 # t2ImgControllers = Text2ImgControllers()
 folder_path = Folder_Paths.Folder_paths()
 # commonUtils = Utils()
@@ -70,6 +72,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 print("wosdfsfsdf")
 import routes.extraRouter as extraRouter
@@ -77,9 +88,16 @@ import routes.img2imgRouter as img2imgRouter
 import routes.text2imgRouter as text2imgRouter
 from common.Types import Text2Image_Type
 from controllers.Text2ImgControllers import Text2ImgControllers
+from routes.imagesRoutes import images_routes
+
+
 app.include_router(extraRouter.extra_router)
 app.include_router(text2imgRouter.router)
 app.include_router(img2imgRouter.img2imgRouter)
+app.include_router(images_routes)
+
+
+
 @app.get("/")
 async def root():
    return "<h1>server working!</h1>"

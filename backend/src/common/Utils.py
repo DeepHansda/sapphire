@@ -1,6 +1,6 @@
 import asyncio
 import io
-import os,json
+import os, json
 import base64
 import subprocess
 from datetime import date
@@ -148,13 +148,22 @@ class Utils:
 
         return rows, cols
 
-    def byte_img_to_base64(self, byte_img: bytes) -> str:
-        byte_img_base64 = base64.b64encode(byte_img).decode("utf-8")
+    def byte_img_to_base64(self, byte_img: bytes, img_path) -> str:
+        if img_path:
+            with open(img_path, "rb") as img:
+                byte_img_base64 = base64.b64encode(img.read()).decode("utf-8")
+        else:
+            byte_img_base64 = base64.b64encode(byte_img).decode("utf-8")
         return byte_img_base64
 
-    def handle_generated_images(self, images: List[Image.Image], base64_for_img:bool) -> Any:
+    def handle_generated_images(
+        self, images: List[Image.Image],metaData:{str:any}, base64_for_img: bool, tag: str
+    ) -> Any:
         today = date.today()
-        as_path = f"{OUTPUT}/{today}"
+        if tag:
+            as_path = f"{OUTPUT}/{tag}/{today}"
+        else:
+            as_path = f"{OUTPUT}/{today}"
         output_path = os.path.join(cwd, as_path)
         if not os.path.exists(output_path):
             os.makedirs(output_path)
@@ -162,8 +171,11 @@ class Utils:
         print(images)
         for index, image in enumerate(images):
             index = file_count_in_output + index
-            img_name = f"{OUTPUT}_{index}_{today}.png"
-            with open(f"{output_path}/{img_name}", "wb") as img:
+            file_name = f"{OUTPUT}_{index}_{today}"
+            if metaData is not None:
+                with open(f"{output_path}/{file_name}.json", "wb") as metaJson:
+                    metaJson.write(json.dumps(metaData).encode("utf-8"))
+            with open(f"{output_path}/{file_name}.png", "wb") as img:
                 image.save(img, format="PNG")
 
         images_length = len(images)
@@ -181,20 +193,22 @@ class Utils:
 
             if base64_for_img is True:
                 byte_imgs_list_base64 = []
-                byte_img_base64 = self.byte_img_to_base64(byte_img)
+                byte_img_base64 = self.byte_img_to_base64(byte_img=byte_img,img_path=None)
 
                 for b_i in byte_imgs_list:
-                    b_i_base64 = self.byte_img_to_base64(b_i)
+                    b_i_base64 = self.byte_img_to_base64(byte_img=b_i,img_path=None)
                     byte_imgs_list_base64.append(b_i_base64)
 
-                return json.dumps({"imgs_list":byte_imgs_list_base64, "img":byte_img_base64})
+                return json.dumps(
+                    {"imgs_list": byte_imgs_list_base64, "img": byte_img_base64}
+                )
 
             return byte_imgs_list, byte_img
         else:
             result_images = images[0]
             byte_img = self.get_byte_img(result_images)
             if base64_for_img is True:
-                byte_img_base64 = self.byte_img_to_base64(byte_img)
+                byte_img_base64 = self.byte_img_to_base64(byte_img=byte_img,img_path=None)
                 return byte_img_base64
             return byte_img
 
