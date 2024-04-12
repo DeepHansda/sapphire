@@ -12,4 +12,10 @@ UNET = "unet"
 UPSCALE_MODELS = "upscale_models"
 INPUT = "input"
 OUTPUT = "output"
+TEXT2IMG_TAG = "text2img"
+IMG2IMG_TAG = "img2img"
+TEXT2IMG_XL_TAG = "text2img_xl"
+IMG2IMG_XL_TAG = "img2img_xl"
+
+
 

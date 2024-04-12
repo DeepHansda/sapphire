@@ -6,11 +6,17 @@ from common.PipelineComponents import PipelineComponents
 from common.Types import Text2Image_Type
 from common.Utils import Utils
 from diffusers import AutoPipelineForText2Image
-from diffusers.pipelines.stable_diffusion.pipeline_output import \
-    StableDiffusionPipelineOutput
-from fastapi import status
-from fastapi.responses import JSONResponse, Response
+from diffusers.pipelines.stable_diffusion.pipeline_output import (
+    StableDiffusionPipelineOutput,
+)
+from fastapi import status, HTTPException
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from PIL import Image
+from common.const import TEXT2IMG_TAG
+from datetime import date
+
+
+diff_utils = Utils()
 
 
 class Text2ImgControllers:
@@ -23,6 +29,7 @@ class Text2ImgControllers:
         self.sharedValues = sharedValues.load_shared_values()
         self.device = self.pipeline_components.device
 
+    @diff_utils.exception_handler
     async def text2img(self, req: Text2Image_Type):
         pipeline = AutoPipelineForText2Image.from_pipe(self.shared_component)
 
@@ -67,9 +74,10 @@ class Text2ImgControllers:
             num_images_per_prompt=batch_size,
         )
 
-        
         additional_data = {
-            "message": "Additional data along with image",
+            "tag": TEXT2IMG_TAG,
+            "prompt": prompt,
+            "negative_prompt": negative_prompt,
             "width": width,
             "height": height,
             "seed": seed,
@@ -79,20 +87,44 @@ class Text2ImgControllers:
             "num_inference_steps": steps,
             "batch_size": batch_size,
         }
-        img_data_json = self.diff_utils.handle_generated_images(result.images,base64_for_img=False)
+        images_length = len(result.images)
+        if req.want_enc_imgs:
+            img_data_json = self.diff_utils.handle_generated_images(
+                result.images,
+                metaData=additional_data,
+                base64_for_img=True,
+                tag=TEXT2IMG_TAG,
+            )
 
-        additional_data_json = json.dumps(additional_data)
+            additional_data_json = json.dumps(additional_data)
 
-        # Creating a JSON response with image bytes and additional data
-        response_data = {
-            "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
-            "additional_data": additional_data_json,
-        }
-        return Response(content=img_data_json,media_type="image/png")
-        # return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+            # Creating a JSON response with image bytes and additional data
+            response_data = {
+                "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
+                "additional_data": additional_data_json,
+                "date":str(date.today())
+            }
 
-    # except Exception as e:
-    #     print(e)
-    #     return HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-    #     )
+            return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
+
+        if images_length > 1:
+            byte_imgs_list, byte_img = self.diff_utils.handle_generated_images(
+                result.images,
+                metaData=additional_data,
+                base64_for_img=False,
+                tag=TEXT2IMG_TAG,
+            )
+            if images_length > 4:
+                return StreamingResponse(
+                    content=(img for img in byte_imgs_list), media_type="image/png"
+                )
+
+            return Response(content=byte_img, media_type="image/png")
+
+        img_data_json = self.diff_utils.handle_generated_images(
+            result.images,
+            metaData=additional_data,
+            base64_for_img=False,
+            tag=TEXT2IMG_TAG,
+        )
+        return Response(content=img_data_json, media_type="image/png")
