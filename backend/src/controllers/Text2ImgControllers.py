@@ -13,6 +13,8 @@ from fastapi import status, HTTPException
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from PIL import Image
 from common.const import TEXT2IMG_TAG
+from datetime import date
+
 
 diff_utils = Utils()
 
@@ -100,6 +102,7 @@ class Text2ImgControllers:
             response_data = {
                 "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
                 "additional_data": additional_data_json,
+                "date":str(date.today())
             }
 
             return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)
