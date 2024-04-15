@@ -1,6 +1,8 @@
+"use client"
 import ImageGallery from "@/components/imageGallery/ImageGallery";
+import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
-import { AppContext } from "@/lib/AppContext";
+
 import { useContext } from "react";
 
 export default function Home() {

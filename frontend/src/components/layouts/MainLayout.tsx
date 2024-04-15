@@ -1,8 +1,8 @@
 "use client";
-import { AppContext, defaultFormData } from "@/lib/AppContext";
+import { defaultFormData, FormContextType } from "@/lib/AppContext";
 import { NextUIProvider, ScrollShadow } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import React, { useReducer, useState } from "react";
+import React, { createContext, useReducer, useState } from "react";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import {
@@ -11,6 +11,15 @@ import {
 } from "@/lib/stateMangement/reducers/imagesReducers";
 import { imageReducersConst } from "@/lib/const";
 import { generateText2Img, getImagesByTag } from "@/lib/api";
+
+export const AppContext = createContext<FormContextType>({
+  formDataState: defaultFormData,
+  handleFormState: (v: any) => {},
+  generatedResponse: {},
+  handleFormSubmit: (obj: { [key: string]: any }, type: string): any => {},
+  getImages: (tag: string): any => {},
+  allImagesState: initialImagesState,
+});
 
 export default function MainLayout({
   children,
@@ -28,7 +37,7 @@ export default function MainLayout({
     setFormDataState((prevValues) => ({ ...prevValues, ...v }));
   };
 
-  const handleFormSubmit = (obj: { [key: string]: any }) => {
+  const handleFormSubmit = (obj: { [key: string]: any }, type: string) => {
     dispatch({
       type: imageReducersConst.imagesRequest,
     });
@@ -37,18 +46,25 @@ export default function MainLayout({
       formData.append(key, obj[key]);
     }
     formData.append("want_enc_imgs", "true");
-    generateText2Img(formData)
+    generateText2Img(formData, type)
       .then((result) => {
-        const img_d = {
-          img_data: JSON.parse(result?.additional_data),
-          enc_img: result?.enc_img_data,
-        };
+        console.log(result);
+        let imgs = [];
+        if (obj.batch_size > 1) {
+          const json_list = result?.enc_img_data;
+          imgs = JSON.parse(json_list)?.imgs_list;
+        } else {
+          imgs = [result?.enc_img_data];
+        }
+
         const img_date = result?.date;
         dispatch({
           type: imageReducersConst.addImages,
           payload: {
-            img_d,
+            img_data: JSON.parse(result?.additional_data),
+            enc_imgs: imgs,
             img_date,
+            type,
           },
         });
         return result;
@@ -57,15 +73,15 @@ export default function MainLayout({
   };
 
   const getImages = (tag: string) => {
-    console.log("calling");
     dispatch({
       type: imageReducersConst.imagesRequest,
     });
     getImagesByTag(tag)
       .then((result) => {
+        // console.log(JSON.parse(result));
         dispatch({
           type: imageReducersConst.getImages,
-          payload: JSON.parse(result)?.img_list,
+          payload: { data: JSON.parse(result)?.img_list, tag },
         });
       })
       .catch((err) => {
@@ -75,6 +91,7 @@ export default function MainLayout({
         });
       });
   };
+
   return (
     <NextUIProvider navigate={router.push}>
       <AppContext.Provider

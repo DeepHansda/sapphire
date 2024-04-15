@@ -28,6 +28,7 @@ export interface Text2Img {
 export interface AllImagesState {
   date: any;
   message: any;
-  img_list: any;
+  text2img_list: [],
+  img2img_list: [],
   isLoading: boolean;
 }

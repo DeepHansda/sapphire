@@ -1,8 +1,8 @@
 import { Text2Img } from "./types";
 
-const api = "https://quail-heroic-ghastly.ngrok-free.app/proxy/8000";
+const api = "https://rightly-assured-ray.ngrok-free.app/proxy/8000/";
 
-export const generateText2Img = async (data: FormData) => {
+export const generateText2Img = async (data: FormData, type: string) => {
   try {
     const opt = {
       method: "POST",
@@ -23,7 +23,7 @@ export const getImagesByTag = async (tag: string) => {
       headers: new Headers({
         "ngrok-skip-browser-warning": "true",
       }),
-      cache: "no-cache",
+      // cache: "no-cache",
     };
     const response = await fetch(`${api}/get-images/${tag}`, opt);
     if (!response.ok) {

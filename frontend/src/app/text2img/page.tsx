@@ -1,21 +1,23 @@
 "use client";
 import ImageGallery from "@/components/imageGallery/ImageGallery";
+import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
-import { AppContext } from "@/lib/AppContext";
+import { TEXT2IMG } from "@/lib/const";
 import { useContext, useEffect } from "react";
 
 export default function Text2Img() {
-  const {getImages,allImagesState,handleFormSubmit} = useContext(AppContext);
+  const { getImages, allImagesState, handleFormSubmit } =
+    useContext(AppContext);
 
   useEffect(() => {
-    getImages("text2img")
+    getImages(TEXT2IMG);
   }, []);
   console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <PromptBox handleFormSubmit={handleFormSubmit} />
+      <PromptBox />
       <div>
-        <ImageGallery img_list={allImagesState?.img_list} />
+        <ImageGallery img_list={allImagesState?.text2img_list} />
       </div>
     </main>
   );

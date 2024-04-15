@@ -1,14 +1,15 @@
-import { createContext } from "react";
+// "use client"
+// import { createContext } from "react";
 import { AllImagesState, Text2Img } from "./types";
 import { initialImagesState } from "./stateMangement/reducers/imagesReducers";
 
-type FormContextType = {
+export type FormContextType = {
   formDataState: Text2Img;
   generatedResponse: {};
   handleFormState: (v: any) => void;
-  handleFormSubmit: (obj: { [key: string]: any }) => any;
+  handleFormSubmit: (obj: { [key: string]: any }, type: string) => any;
   getImages: (tag: string) => any;
-  allImagesState:AllImagesState
+  allImagesState: AllImagesState
 };
 export const defaultFormData: Text2Img = {
   prompt: "",
@@ -25,11 +26,11 @@ export const defaultFormData: Text2Img = {
   fixed_seed: false,
 };
 
-export const AppContext = createContext<FormContextType>({
-  formDataState: defaultFormData,
-  handleFormState: (v: any) => {},
-  generatedResponse: {},
-  handleFormSubmit: (obj: { [key: string]: any }): any => {},
-  getImages: (tag: string): any => {},
-  allImagesState: initialImagesState,
-});
+// export const AppContext = createContext<FormContextType>({
+//   formDataState: defaultFormData,
+//   handleFormState: (v: any) => {},
+//   generatedResponse: {},
+//   handleFormSubmit: (obj: { [key: string]: any }): any => {},
+//   getImages: (tag: string): any => {},
+//   allImagesState: initialImagesState,
+// });

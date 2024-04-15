@@ -28,7 +28,13 @@ export default function ImgWithButton({
   imgData: { string: any };
 }) {
   const { isOpen, onOpenChange, onOpen } = useDisclosure();
-
+  // const binary_img = fetch(`data:image/jpeg;base64,${encoded_img}`).then(
+  //   async (res) => {
+  //     const blob = await res.blob();
+  //     return blob;
+  //   }
+  // );
+  // console.log(binary_img.catch);
   return (
     <div>
       <ImgModal

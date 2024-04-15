@@ -1,30 +1,26 @@
 "use client";
+
+import { ImageEditor } from "@/components/imageEditor/ImaegEditor";
 import ImageGallery from "@/components/imageGallery/ImageGallery";
+import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
-import { getImagesByTag } from "@/lib/api";
-import { AppContext } from "@/lib/AppContext";
-import React, { useContext } from "react";
-import useSWR from "swr";
+import { IMG2IMG } from "@/lib/const";
+import { useContext, useEffect } from "react";
 
 export default function Img2Img() {
-  const { handleFormSubmit, generatedResponse } = useContext(AppContext);
+  const { getImages, allImagesState, handleFormSubmit } =
+    useContext(AppContext);
 
-  const fetcher = () =>
-    getImagesByTag("text2img")
-      .then((response) => {
-        const img_list = JSON.parse(response)?.img_list;
-        console.log("", img_list);
-        return img_list;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  const { data } = useSWR("img2img", fetcher);
+  useEffect(() => {
+    getImages(IMG2IMG);
+  }, []);
+  console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <PromptBox handleFormSubmit={handleFormSubmit} />
+      <ImageEditor/>
+      <PromptBox />
       <div>
-        <ImageGallery img_list={data} generatedResponse={generatedResponse} />
+        <ImageGallery img_list={allImagesState?.img2img_list} />
       </div>
     </main>
   );
