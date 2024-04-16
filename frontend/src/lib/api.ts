@@ -1,14 +1,22 @@
-import { Text2Img } from "./types";
+import { IMG2IMG, TEXT2IMG } from "./const";
+
 
 const api = "https://rightly-assured-ray.ngrok-free.app/proxy/8000/";
 
-export const generateText2Img = async (data: FormData, type: string) => {
+export const generateImg = async (data: FormData, type: string) => {
   try {
     const opt = {
       method: "POST",
       body: data,
     };
-    const res = await fetch(`${api}/text-to-img`, opt);
+    let res = {}
+    if (type === TEXT2IMG) {
+      res = await fetch(`${api}/text-to-img`, opt);
+    }
+
+    else if (type === IMG2IMG) {
+      res = await fetch(`${api}/img-to-img`, opt);
+    }
     return res.json();
   } catch (e) {
     console.log(e);

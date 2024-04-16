@@ -1,17 +1,16 @@
 // "use client"
 // import { createContext } from "react";
-import { AllImagesState, Text2Img } from "./types";
-import { initialImagesState } from "./stateMangement/reducers/imagesReducers";
+import { AllImagesState, GenerationType } from "./types";
 
 export type FormContextType = {
-  formDataState: Text2Img;
+  formDataState: GenerationType;
   generatedResponse: {};
   handleFormState: (v: any) => void;
   handleFormSubmit: (obj: { [key: string]: any }, type: string) => any;
   getImages: (tag: string) => any;
   allImagesState: AllImagesState
 };
-export const defaultFormData: Text2Img = {
+export const defaultFormData: GenerationType = {
   prompt: "",
   negative_prompt: "",
   scheduler: "eular",

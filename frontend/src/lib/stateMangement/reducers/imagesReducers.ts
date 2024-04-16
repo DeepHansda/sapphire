@@ -36,36 +36,30 @@ export const imagesReducers = (state = initialImagesState, action) => {
                 }
             }
         case imageReducersConst.addImages:
-            let updated_list = [];
-            let init_img_list = [];
+            let updatedList = [];
+            const initImgList = payload.type === TEXT2IMG ? state.text2img_list : state.img2img_list;
 
-            if (payload.type === TEXT2IMG) {
-                init_img_list = state.text2img_list;
-            } else if (payload.type === IMG2IMG) {
-                init_img_list = state.img2img_list;
-            }
-
-            const existingDateIndex = init_img_list.findIndex(item => item.date === payload.img_date);
+            const existingDateIndex = initImgList.findIndex(item => item.date === payload.img_date);
 
             if (existingDateIndex === -1) {
                 // If the date doesn't exist in the list, create a new entry
-                const sub_dir_images_list = payload.enc_imgs?.map(enc_img => ({
+                const subDirImagesList = payload.enc_imgs?.map(enc_img => ({
                     img_data: payload.img_data,
                     enc_img: enc_img,
                 })) || [];
 
-                updated_list = [{
-                    sub_dir_images: sub_dir_images_list,
+                updatedList = [{
+                    sub_dir_images: subDirImagesList,
                     date: payload.img_date,
-                }, ...init_img_list];
+                }, ...initImgList];
             } else {
-                updated_list = init_img_list.map((item, index) => {
+                updatedList = initImgList.map((item, index) => {
                     if (index === existingDateIndex) {
-                        const sub_dir_images_list = payload.enc_imgs?.map(enc_img => ({
+                        const subDirImagesList = payload.enc_imgs?.map(enc_img => ({
                             img_data: payload.img_data,
                             enc_img: enc_img,
                         })) || [];
-                        const updatedSubDirImages = [...sub_dir_images_list, ...item.sub_dir_images];
+                        const updatedSubDirImages = [...subDirImagesList, ...item.sub_dir_images];
                         return { ...item, sub_dir_images: updatedSubDirImages };
                     }
                     return item;
@@ -74,11 +68,10 @@ export const imagesReducers = (state = initialImagesState, action) => {
 
             return {
                 ...state,
-                text2img_list: updated_list,
                 isLoading: false,
-                message: "success"
-
-            }
+                message: "success",
+                [payload.type === TEXT2IMG ? "text2img_list" : "img2img_list"]: updatedList,
+            };
 
 
         case imageReducersConst.errorImages:

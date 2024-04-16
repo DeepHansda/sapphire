@@ -10,7 +10,7 @@ export interface ImgMetaData {
   guidance_scale: number;
 }
 
-export interface Text2Img {
+export interface GenerationType {
   prompt: string;
   negative_prompt: string;
   scheduler: string;
@@ -23,7 +23,10 @@ export interface Text2Img {
   guidance_scale: number;
   batch_size: number;
   fixed_seed: boolean;
+  image?:string;
+  strength?:number;
 }
+
 
 export interface AllImagesState {
   date: any;

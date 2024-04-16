@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageEditor } from "@/components/imageEditor/ImaegEditor";
+import { ImageEditors } from "@/components/imageEditor/ImaegEditors";
 import ImageGallery from "@/components/imageGallery/ImageGallery";
 import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
@@ -17,7 +17,7 @@ export default function Img2Img() {
   console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <ImageEditor/>
+      <ImageEditors/>
       <PromptBox />
       <div>
         <ImageGallery img_list={allImagesState?.img2img_list} />

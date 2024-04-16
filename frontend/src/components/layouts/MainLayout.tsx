@@ -1,16 +1,16 @@
 "use client";
+import { generateImg, getImagesByTag } from "@/lib/api";
 import { defaultFormData, FormContextType } from "@/lib/AppContext";
+import { imageReducersConst } from "@/lib/const";
+import {
+  imagesReducers,
+  initialImagesState,
+} from "@/lib/stateMangement/reducers/imagesReducers";
 import { NextUIProvider, ScrollShadow } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import React, { createContext, useReducer, useState } from "react";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
-import {
-  imagesReducers,
-  initialImagesState,
-} from "@/lib/stateMangement/reducers/imagesReducers";
-import { imageReducersConst } from "@/lib/const";
-import { generateText2Img, getImagesByTag } from "@/lib/api";
 
 export const AppContext = createContext<FormContextType>({
   formDataState: defaultFormData,
@@ -42,11 +42,13 @@ export default function MainLayout({
       type: imageReducersConst.imagesRequest,
     });
     const formData = new FormData();
+    
     for (const key in obj) {
       formData.append(key, obj[key]);
     }
     formData.append("want_enc_imgs", "true");
-    generateText2Img(formData, type)
+    formData.append("strength", "0.65");
+    generateImg(formData, type)
       .then((result) => {
         console.log(result);
         let imgs = [];
