@@ -48,7 +48,6 @@ class ImagesControllers:
                 sorted_files = sorted(all_files, reverse=True)
                 for img in sorted_files:
                     img_path = os.path.join(as_path, img)
-                    print(img_path)
                     img_data = {}
                     b64_img = ""
                     # sub_dirs_dict = {}

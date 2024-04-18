@@ -1,6 +1,7 @@
 from diffusers import AutoencoderKL, AutoPipelineForText2Image, StableDiffusionPipeline
 import common.shared as sharedValues
 import torch
+import asyncio
 from common.const import INIT_DEVICE,CHECKPOINT
 from diffusers import (
     DDIMScheduler,
@@ -23,6 +24,7 @@ class PipelineComponents:
         self.component_pipeline: StableDiffusionPipeline = None
         self.torch_float = torch.float16
         self.sharedValues = sharedValues.load_shared_values()
+        print(self.sharedValues)
         self.device = self.sharedValues.get(INIT_DEVICE)
 
         
@@ -33,6 +35,7 @@ class PipelineComponents:
             print(self.torch_float)
         # model_path = "/kaggle/working/sapphire//src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
         sd_model_path = self.sharedValues.get(CHECKPOINT)
+        print("pipeline setup : " + sd_model_path)
         vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
         if vae_path:
             vae = AutoencoderKL.from_single_file(
