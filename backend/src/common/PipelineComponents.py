@@ -2,7 +2,7 @@ from diffusers import AutoencoderKL, AutoPipelineForText2Image, StableDiffusionP
 import common.shared as sharedValues
 import torch
 import asyncio
-from common.const import INIT_DEVICE,CHECKPOINT
+from common.const import INIT_DEVICE, CHECKPOINT
 from diffusers import (
     DDIMScheduler,
     DDPMScheduler,
@@ -27,8 +27,6 @@ class PipelineComponents:
         print(self.sharedValues)
         self.device = self.sharedValues.get(INIT_DEVICE)
 
-        
-
     def pipeline_setup(self):
         if self.device == "cpu":
             self.torch_float = torch.float32
@@ -51,10 +49,10 @@ class PipelineComponents:
                 safety_checker=None,
             ).to(self.device)
         )
-
         self.component_pipeline = comp_pipeline
+
+    def get_pipeline(self) -> StableDiffusionPipeline:
         return self.component_pipeline
-        # print(type(self.component_pipeline))
 
     def get_scheduler(self, scheduler_name: str, use_kerras: bool = False):
 

@@ -21,7 +21,8 @@ diff_utils = Utils()
 class Img2ImgControllers:
     def __init__(self):
         self.pipeline_components = PipelineComponents()
-        self.shared_component = self.pipeline_components.pipeline_setup()
+        self.pipeline_components.pipeline_setup()
+        self.shared_component = self.pipeline_components.get_pipeline()
         self.device = self.pipeline_components.device
 
     # @diff_utils.exception_handler

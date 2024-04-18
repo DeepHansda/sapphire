@@ -5,69 +5,50 @@ import common.Folder_Paths as Folder_Paths
 import logging, os, time
 from common.startup import startUp
 from fastapi.middleware.cors import CORSMiddleware
-from watchfiles import run_process
-from fastapi import FastAPI
+from watchfiles import run_process,arun_process,awatch
+from fastapi import FastAPI, status
 from fastapi.requests import Request
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 from common.PipelineComponents import PipelineComponents
 from common.Utils import FileChangeHandler
+from fastapi.responses import JSONResponse
 
 from routes.extraRouter import extra_router
 from routes.text2imgRouter import text2ImgRouter
 from routes.img2imgRouter import img2imgRouter
 from routes.imagesRoutes import images_routes
 
-# t2ImgControllers = Text2ImgControllers()
-folder_path = Folder_Paths.Folder_paths()
-# commonUtils = Utils()
-pipeline_components = PipelineComponents()
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 
 main_shared_file_path = os.path.join(Folder_Paths.cwd, "shared_values.json")
 
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#    functions_to_call = [pipeline_components.pipeline_setup()]
-#    # Start watching for file changes asynchronously
-#    # file_path = "/kaggle/working/sapphire/src/shared_values.json"
-#    event_handler = FileChangeHandler(functions_to_call, main_shared_file_path)
-#    observer = Observer()
-#    observer.schedule(event_handler, main_shared_file_path,recursive=True)
-#    observer.start()
+async def callback(changes):
+    print("changes in :", changes)
 
-#    print("Setup Complete.")
-#    yield
-#    tasks = asyncio.all_tasks()
-#    for tsk in tasks:
-#        tsk.cancel()
 
-#    # Wait for all tasks to be cancelled
-#    await asyncio.gather(*tasks, return_exceptions=True)
-
-#    # Close the event loop
-#    asyncio.get_event_loop().close()
-#    observer.stop()
-#    observer.join()  # Wait for the observer to stop completely
-#    print("Observer stopped.")
-
-app = FastAPI()
-main_app_lifespan = app.router.lifespan_context
-def callback(changes):
-    print("changes in :" ,changes)
 def changesMade():
     print("changes made")
+
+
+async def changeHandler():
+    async for changes in awatch(main_shared_file_path):
+        print(changes)
+
+
 @asynccontextmanager
-async def lifespan_wrapper(app):
-    run_process("/kaggle/working/sapphire/backend/src/shared_values.json",target=changesMade,callback=callback)
-    async with main_app_lifespan(app) as maybe_state:
-        yield maybe_state
-    print("sub shutdown")
+async def lifespan(app: FastAPI):
+    try:
+        await changeHandler()
+    except Exception as e:
+        print(e)
+    yield
+    asyncio.get_event_loop().stop()
+    print("main shutdown")
 
 
-app.router.lifespan_context = lifespan_wrapper
+app = FastAPI(lifespan=lifespan)
+
 
 origins = ["*", "http://localhost:3000"]
 
