@@ -29,9 +29,15 @@ export interface GenerationType {
 
 
 export interface AllImagesState {
-  date: any;
   message: any;
   text2img_list: [],
   img2img_list: [],
   isLoading: boolean;
+}
+
+export interface AllModelsState{
+  allModels: {},
+  selectedModels: {},
+  isLoading: boolean,
+  message: string
 }

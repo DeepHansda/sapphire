@@ -1,7 +1,13 @@
 "use client";
-import { generateImg, getImagesByTag } from "@/lib/api";
+import {
+  generateImg,
+  getAllModels,
+  getAllSelectedValues,
+  getImagesByTag,
+  getModelsByType,
+} from "@/lib/api";
 import { defaultFormData, FormContextType } from "@/lib/AppContext";
-import { imageReducersConst } from "@/lib/const";
+import { imageReducersConst, modelsReducersConst } from "@/lib/const";
 import {
   imagesReducers,
   initialImagesState,
@@ -11,6 +17,11 @@ import { useRouter } from "next/navigation";
 import React, { createContext, useReducer, useState } from "react";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
+import {
+  initialModelsState,
+  modelsReducers,
+} from "@/lib/stateMangement/reducers/modelsReducers";
+import { error } from "console";
 
 export const AppContext = createContext<FormContextType>({
   formDataState: defaultFormData,
@@ -19,6 +30,9 @@ export const AppContext = createContext<FormContextType>({
   handleFormSubmit: (obj: { [key: string]: any }, type: string): any => {},
   getImages: (tag: string): any => {},
   allImagesState: initialImagesState,
+  getModels: () => {},
+  allModelsState: initialModelsState,
+  getSelectedValues: () => {},
 });
 
 export default function MainLayout({
@@ -28,8 +42,14 @@ export default function MainLayout({
 }) {
   const [formDataState, setFormDataState] = useState(defaultFormData);
   const [generatedResponse, setGeneratedResponse] = useState({});
-  const [state, dispatch] = useReducer(imagesReducers, initialImagesState);
-
+  const [imagesState, imagesDispatch] = useReducer(
+    imagesReducers,
+    initialImagesState
+  );
+  const [modlesState, modelsDispatch] = useReducer(
+    modelsReducers,
+    initialModelsState
+  );
   const router = useRouter();
 
   const handleFormState = (v: any): void => {
@@ -38,11 +58,11 @@ export default function MainLayout({
   };
 
   const handleFormSubmit = (obj: { [key: string]: any }, type: string) => {
-    dispatch({
+    imagesDispatch({
       type: imageReducersConst.imagesRequest,
     });
     const formData = new FormData();
-    
+
     for (const key in obj) {
       formData.append(key, obj[key]);
     }
@@ -60,7 +80,7 @@ export default function MainLayout({
         }
 
         const img_date = result?.date;
-        dispatch({
+        imagesDispatch({
           type: imageReducersConst.addImages,
           payload: {
             img_data: JSON.parse(result?.additional_data),
@@ -75,21 +95,60 @@ export default function MainLayout({
   };
 
   const getImages = (tag: string) => {
-    dispatch({
+    imagesDispatch({
       type: imageReducersConst.imagesRequest,
     });
     getImagesByTag(tag)
       .then((result) => {
         // console.log(JSON.parse(result));
-        dispatch({
+        imagesDispatch({
           type: imageReducersConst.getImages,
           payload: { data: JSON.parse(result)?.img_list, tag },
         });
       })
       .catch((err) => {
-        dispatch({
+        imagesDispatch({
           type: imageReducersConst.errorImages,
           payload: err.message,
+        });
+      });
+  };
+
+  const getModels =  () => {
+    modelsDispatch({
+      type: modelsReducersConst.modelsRequest,
+    });
+    getAllModels()
+      .then((result) => {
+        modelsDispatch({
+          type: modelsReducersConst.getAllModels,
+          payload: result,
+        });
+      })
+      .catch((error) => {
+        modelsDispatch({
+          type: modelsReducersConst.modelsError,
+          payload: error,
+        });
+      });
+  };
+
+  const getSelectedValues = () => {
+    modelsDispatch({
+      type: modelsReducersConst.modelsRequest,
+    });
+    getAllSelectedValues()
+      .then((result) => {
+        console.log(result)
+        modelsDispatch({
+          type: modelsReducersConst.selectModels,
+          payload: result,
+        });
+      })
+      .catch((error) => {
+        modelsDispatch({
+          type: modelsReducersConst.modelsError,
+          payload: error,
         });
       });
   };
@@ -103,7 +162,10 @@ export default function MainLayout({
           handleFormSubmit,
           generatedResponse,
           getImages,
-          allImagesState: state,
+          allImagesState: imagesState,
+          getModels,
+          allModelsState: modlesState,
+          getSelectedValues,
         }}
       >
         <div className="flex">
