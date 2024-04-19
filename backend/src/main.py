@@ -47,7 +47,7 @@ async def lifespan(app: FastAPI):
     print("main shutdown")
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 
 origins = ["*", "http://localhost:3000"]

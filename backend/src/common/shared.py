@@ -45,6 +45,7 @@ async def retrive_shared_values(shared_values: Dict[str, str]):
         return existing_shared_values
 
     new_shared_values = set(shared_values.values())
+    print("new_shared_values",new_shared_values)
 
     # Check if all file names provided in the request exist in the existing file names
     if not set(existing_shared_values.values()).issuperset(new_shared_values):

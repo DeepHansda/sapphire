@@ -5,7 +5,7 @@ import torch,gc
 
 from common.Folder_Paths import models_dir, Folder_paths
 from common.Utils import Utils
-from common.shared import save_shared_values
+from common.shared import save_shared_values,load_shared_values
 from common.PipelineComponents import PipelineComponents
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
@@ -80,7 +80,10 @@ class ModelsController:
         Text2ImgControllers()
         Img2ImgControllers()
 
+
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={"model_name": file_name, "model_path": path},
         )
+    
+    

@@ -27,7 +27,7 @@ async def startUp():
     
     default_checkpoint = {}
     shard_values = load_shared_values()
-    if CHECKPOINT not in shard_values:
+    if CHECKPOINT not in shard_values or shard_values[CHECKPOINT] == "":
         checkpoint_name, checkpoint_path = next(
             iter(all_models.get(CHECKPOINTS, {}).items()), (None, None)
         )
