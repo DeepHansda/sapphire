@@ -4,11 +4,11 @@ from common.Types import Text2Image_Type
 from contextlib import asynccontextmanager
 
 t2ImgControllers = Text2ImgControllers()
-router = APIRouter()
+text2ImgRouter = APIRouter()
 
 
 
-@router.post("/text-to-img")
+@text2ImgRouter.post("/text-to-img")
 async def text_to_img(prompt:Text2Image_Type = Depends()):
         print(prompt)
         res = await t2ImgControllers.text2img(prompt)

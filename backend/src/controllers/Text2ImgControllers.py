@@ -23,7 +23,8 @@ class Text2ImgControllers:
     def __init__(self):
         # setup pipeline component
         self.pipeline_components = PipelineComponents()
-        self.shared_component = self.pipeline_components.pipeline_setup()
+        self.pipeline_components.pipeline_setup()
+        self.shared_component = self.pipeline_components.get_pipeline()
 
         self.diff_utils = Utils()
         self.sharedValues = sharedValues.load_shared_values()

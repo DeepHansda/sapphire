@@ -1,7 +1,8 @@
 from diffusers import AutoencoderKL, AutoPipelineForText2Image, StableDiffusionPipeline
 import common.shared as sharedValues
 import torch
-from common.const import INIT_DEVICE,CHECKPOINT
+import asyncio
+from common.const import INIT_DEVICE, CHECKPOINT
 from diffusers import (
     DDIMScheduler,
     DDPMScheduler,
@@ -23,9 +24,8 @@ class PipelineComponents:
         self.component_pipeline: StableDiffusionPipeline = None
         self.torch_float = torch.float16
         self.sharedValues = sharedValues.load_shared_values()
+        print(self.sharedValues)
         self.device = self.sharedValues.get(INIT_DEVICE)
-
-        
 
     def pipeline_setup(self):
         if self.device == "cpu":
@@ -33,6 +33,7 @@ class PipelineComponents:
             print(self.torch_float)
         # model_path = "/kaggle/working/sapphire//src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
         sd_model_path = self.sharedValues.get(CHECKPOINT)
+        print("pipeline setup : " + sd_model_path)
         vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
         if vae_path:
             vae = AutoencoderKL.from_single_file(
@@ -48,10 +49,10 @@ class PipelineComponents:
                 safety_checker=None,
             ).to(self.device)
         )
-
         self.component_pipeline = comp_pipeline
+
+    def get_pipeline(self) -> StableDiffusionPipeline:
         return self.component_pipeline
-        # print(type(self.component_pipeline))
 
     def get_scheduler(self, scheduler_name: str, use_kerras: bool = False):
 
