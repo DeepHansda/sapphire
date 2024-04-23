@@ -61,7 +61,7 @@ class ModelsController:
         except Exception as e:
             return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
-    @commonUtils.exception_handler
+    # @commonUtils.exception_handler
     async def change_model_by_type(self, model_name: str, model_type: str):
        
         file_name, path = folder_paths.search_file_in_path(model_type, model_name)
@@ -80,10 +80,10 @@ class ModelsController:
         Text2ImgControllers()
         Img2ImgControllers()
 
-
+        updated_values = load_shared_values()
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content={"model_name": file_name, "model_path": path},
+            content=updated_values
         )
     
     

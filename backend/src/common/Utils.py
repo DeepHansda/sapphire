@@ -15,8 +15,7 @@ from common.Types import Text_Emmbed_Type
 from diffusers.utils import make_image_grid
 from fastapi import HTTPException, status
 from PIL import Image
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+
 
 
 class Utils:
@@ -212,45 +211,4 @@ class Utils:
                 return byte_img_base64
             return byte_img
 
-    async def watch_shared_values_changes(
-        self, file_path: str, functions_to_call: List[Callable]
-    ):
-        async for changes in awatch(file_path):
-            print(f"File {file_path} changed")
-            # Call each function in the list when file changes occur
-            for func in functions_to_call:
-                await func()
-
-
-class FileChangeHandler(FileSystemEventHandler):
-    def __init__(self, functions_to_call, file_path):
-        super().__init__()
-        self.functions_to_call = functions_to_call
-        self.file_path = file_path
-
-    async def on_modified(self, event):
-        if event.is_directory:
-            return
-        if event.src_path != self.file_path:
-            return
-            print(f"File {event.src_path} changed")
-        # Call each function in the list when file changes occur
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:  # 'RuntimeError: There is no current event loop...'
-            loop = None
-        for func in self.functions_to_call:
-            if loop and loop.is_running():
-                task = loop.run_until_complete(func())
-                print("fusfdsdkfjdkl;fkl")
-                task.add_done_callback(
-                    lambda t: print(
-                        f"Task done with result={t.result()}  << return val of main()"
-                    )
-                )
-
-            else:
-                print("Starting new event loop")
-                result = asyncio.run(startUp())
-                print(result)
-                # await asyncio.sleep(5)
+   
