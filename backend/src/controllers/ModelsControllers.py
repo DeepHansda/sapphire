@@ -1,22 +1,23 @@
 import json
 import os
 import uvicorn
-import torch,gc
+import torch, gc, threading
 
 from common.Folder_Paths import models_dir, Folder_paths
 from common.Utils import Utils
-from common.shared import save_shared_values,load_shared_values
+from common.shared import save_shared_values, load_shared_values
 from common.PipelineComponents import PipelineComponents
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, BackgroundTasks
 from fastapi.responses import JSONResponse
-from common.const import CHECKPOINT,CHECKPOINTS,LORAS,LORA
+from common.const import CHECKPOINT, CHECKPOINTS, LORAS, LORA
 from controllers.Img2ImgControllers import Img2ImgControllers
 from controllers.Text2ImgControllers import Text2ImgControllers
+
+from importlib import reload
 
 
 commonUtils = Utils()
 folder_paths = Folder_paths()
-pipelineComponents = PipelineComponents()
 
 
 class ModelsController:
@@ -63,7 +64,8 @@ class ModelsController:
 
     # @commonUtils.exception_handler
     async def change_model_by_type(self, model_name: str, model_type: str):
-       
+
+        pipelineComponents = PipelineComponents()
         file_name, path = folder_paths.search_file_in_path(model_type, model_name)
         model = {}
         if model_type == CHECKPOINTS:
@@ -71,19 +73,19 @@ class ModelsController:
         if model_type == LORAS:
             model_type = LORA
         model[model_type] = path
+
         device = pipelineComponents.device
-        save_shared_values(model)
         gc.collect()
         if device == "cuda":
             torch.cuda.empty_cache()
-        pipelineComponents.pipeline_setup()
-        Text2ImgControllers()
-        Img2ImgControllers()
+
+        def init_save():
+            save_shared_values(model)
+
+        tasks = BackgroundTasks()
+        tasks.add_task(init_save)
 
         updated_values = load_shared_values()
         return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content=updated_values
+            status_code=status.HTTP_200_OK, content=updated_values, background=tasks
         )
-    
-    

@@ -35,6 +35,8 @@ class PipelineComponents:
         sd_model_path = self.sharedValues.get(CHECKPOINT)
         print("pipeline setup : " + sd_model_path)
         vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+        if self.device =="cuda":
+            torch.cuda.empty_cache()
         if vae_path:
             vae = AutoencoderKL.from_single_file(
                 vae_path, torch_dtype=self.torch_float
