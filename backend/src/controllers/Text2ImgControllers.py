@@ -5,7 +5,7 @@ import common.shared as sharedValues
 from common.PipelineComponents import PipelineComponents
 from common.Types import Text2Image_Type
 from common.Utils import Utils
-from diffusers import AutoPipelineForText2Image
+from diffusers import AutoPipelineForText2Image, StableDiffusionPipeline
 from diffusers.pipelines.stable_diffusion.pipeline_output import (
     StableDiffusionPipelineOutput,
 )
@@ -24,16 +24,20 @@ class Text2ImgControllers:
         # setup pipeline component
         self.pipeline_components = PipelineComponents()
         self.pipeline_components.pipeline_setup()
-        self.shared_component = self.pipeline_components.get_pipeline()
 
         self.diff_utils = Utils()
         self.sharedValues = sharedValues.load_shared_values()
         self.device = self.pipeline_components.device
 
-    @diff_utils.exception_handler
+    # @diff_utils.exception_handler
     async def text2img(self, req: Text2Image_Type):
-        pipeline = AutoPipelineForText2Image.from_pipe(self.shared_component)
+        self.shared_component = self.pipeline_components.get_pipeline(req.use_lora)
 
+        pipeline: StableDiffusionPipeline = AutoPipelineForText2Image.from_pipe(
+            self.shared_component
+        )
+        if req.use_lora == True:
+            pipeline.fuse_lora(lora_scale=req.lora_scale)
         prompt = req.prompt
         negative_prompt = req.negative_prompt
         width = req.width
@@ -46,6 +50,7 @@ class Text2ImgControllers:
         )
         # self.pipeline.scheduler.use_kerras_sigmas = req.use_kerras
         seed, generator = self.diff_utils.seed_handler(req.seed)
+
         print(seed)
 
         lora_path = (
@@ -103,7 +108,7 @@ class Text2ImgControllers:
             response_data = {
                 "enc_img_data": img_data_json,  # Assuming byte_img is converted to base64 string
                 "additional_data": additional_data_json,
-                "date":str(date.today())
+                "date": str(date.today()),
             }
 
             return JSONResponse(content=response_data, status_code=status.HTTP_200_OK)

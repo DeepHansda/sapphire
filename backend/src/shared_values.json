@@ -1,5 +1,6 @@
 {
     "init_device": "cuda",
-    "checkpoint": "/kaggle/working/sapphire/backend/src/models/checkpoints/DreamShaper_8_pruned.safetensors",
-    "vae": "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+    "checkpoint": "/kaggle/working/sapphire/backend/src/models/checkpoints/darkSushiMixMix_225D.safetensors",
+    "vae": "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors",
+    "lora": "/kaggle/working/sapphire/backend/src/models/loras/ghibli_style_offset.safetensors"
 }
