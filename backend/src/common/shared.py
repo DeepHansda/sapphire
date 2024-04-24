@@ -1,10 +1,10 @@
 import json
 import os
-from typing import Dict
+from typing import Dict, Optional
 
 
 # Save file names to the configuration file
-def save_shared_values(shared_values: Dict[str, str]):
+def save_shared_values(shared_values: Dict[str, str], save: Optional[bool] = False):
     file_path = "shared_values.json"
 
     # Check if the file exists
@@ -16,10 +16,12 @@ def save_shared_values(shared_values: Dict[str, str]):
         # Update the existing shared values with the new ones
         existing_shared_values.update(shared_values)
         shared_values = existing_shared_values
-
-    # Save the updated shared values to the file
-    with open(file_path, "w") as f:
-        json.dump(shared_values, f, indent=4)
+    if save:
+        # Save the updated shared values to the file
+        with open(file_path, "w") as f:
+            json.dump(shared_values, f, indent=4)
+    else:
+        return shared_values
 
 
 def load_shared_values() -> dict:
@@ -45,7 +47,7 @@ async def retrive_shared_values(shared_values: Dict[str, str]):
         return existing_shared_values
 
     new_shared_values = set(shared_values.values())
-    print("new_shared_values",new_shared_values)
+    print("new_shared_values", new_shared_values)
 
     # Check if all file names provided in the request exist in the existing file names
     if not set(existing_shared_values.values()).issuperset(new_shared_values):

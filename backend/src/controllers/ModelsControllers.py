@@ -80,12 +80,12 @@ class ModelsController:
             torch.cuda.empty_cache()
 
         def init_save():
-            save_shared_values(model)
+            save_shared_values(model, save=True)
 
         tasks = BackgroundTasks()
         tasks.add_task(init_save)
 
-        updated_values = load_shared_values()
+        updated_values = save_shared_values(model)
         return JSONResponse(
             status_code=status.HTTP_200_OK, content=updated_values, background=tasks
         )

@@ -33,5 +33,5 @@ async def startUp():
         )
         default_checkpoint[CHECKPOINT] = checkpoint_path
 
-        save_shared_values(default_checkpoint)
+        save_shared_values(default_checkpoint,save=True)
     await startup_event.wait()
