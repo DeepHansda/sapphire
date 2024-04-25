@@ -71,13 +71,18 @@ class PipelineComponents:
             # print(lora_weight_name)
             # print(lora_apdapter_name)
             if len(active_adapters) > 0:
-                self.component_pipeline.delete_adapters(active_adapters[0])
+                self.component_pipeline.unload_lora_weights()
+                self.component_pipeline.unfuse_lora()
             self.component_pipeline.load_lora_weights(
                 lora_path, weight_name=lora_weight_name, adapter_name=lora_apdapter_name
             )
             # self.component_pipeline = lora_pipeline
             return self.component_pipeline
-            # else:
+        else:
+            self.component_pipeline.unload_lora_weights()
+            self.component_pipeline.unfuse_lora()
+            active_adapters = self.component_pipeline.get_active_adapters()
+            print(active_adapters)
             return self.component_pipeline
 
     def get_scheduler(self, scheduler_name: str, use_kerras: bool = False):
