@@ -17,8 +17,10 @@ export default function Img2Img() {
   console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <ImageEditors/>
-      <PromptBox />
+      <div className="flex w-full justify-between gap-x-20">
+        <PromptBox />
+        <ImageEditors />
+      </div>
       <div>
         <ImageGallery img_list={allImagesState?.img2img_list} />
       </div>

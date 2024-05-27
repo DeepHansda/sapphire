@@ -1,10 +1,10 @@
 "use client";
 import {
+  callApi,
   generateImg,
   getAllModels,
   getAllSelectedValues,
-  getImagesByTag,
-  getModelsByType,
+  getImagesByTag
 } from "@/lib/api";
 import { defaultFormData, FormContextType } from "@/lib/AppContext";
 import { imageReducersConst, modelsReducersConst } from "@/lib/const";
@@ -12,16 +12,18 @@ import {
   imagesReducers,
   initialImagesState,
 } from "@/lib/stateMangement/reducers/imagesReducers";
-import { NextUIProvider, ScrollShadow } from "@nextui-org/react";
+import { ScrollShadow } from "@nextui-org/react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { type ThemeProviderProps } from "next-themes/dist/types";
 import { useRouter } from "next/navigation";
-import React, { createContext, useReducer, useState } from "react";
+import { createContext, useReducer, useState } from "react";
 import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
+
 import {
   initialModelsState,
   modelsReducers,
 } from "@/lib/stateMangement/reducers/modelsReducers";
-import { error } from "console";
 
 export const AppContext = createContext<FormContextType>({
   formDataState: defaultFormData,
@@ -33,13 +35,10 @@ export const AppContext = createContext<FormContextType>({
   getModels: () => {},
   allModelsState: initialModelsState,
   getSelectedValues: () => {},
+  updateModels: (model: any) => {},
 });
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MainLayout({ children, ...props }: ThemeProviderProps) {
   const [formDataState, setFormDataState] = useState(defaultFormData);
   const [generatedResponse, setGeneratedResponse] = useState({});
   const [imagesState, imagesDispatch] = useReducer(
@@ -114,7 +113,7 @@ export default function MainLayout({
       });
   };
 
-  const getModels =  () => {
+  const getModels = () => {
     modelsDispatch({
       type: modelsReducersConst.modelsRequest,
     });
@@ -139,7 +138,35 @@ export default function MainLayout({
     });
     getAllSelectedValues()
       .then((result) => {
-        console.log(result)
+        console.log(result);
+        modelsDispatch({
+          type: modelsReducersConst.selectModels,
+          payload: result,
+        });
+      })
+      .catch((error) => {
+        modelsDispatch({
+          type: modelsReducersConst.modelsError,
+          payload: error,
+        });
+      });
+  };
+
+  const updateModels = (data: any) => {
+    modelsDispatch({
+      type: modelsReducersConst.modelsRequest,
+    });
+    console.log(data);
+    const opt = {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    callApi("change-models-by-type", opt)
+      .then((result) => {
+        console.log(result);
         modelsDispatch({
           type: modelsReducersConst.selectModels,
           payload: result,
@@ -154,7 +181,7 @@ export default function MainLayout({
   };
 
   return (
-    <NextUIProvider navigate={router.push}>
+    <NextThemesProvider {...props}>
       <AppContext.Provider
         value={{
           formDataState,
@@ -166,6 +193,7 @@ export default function MainLayout({
           getModels,
           allModelsState: modlesState,
           getSelectedValues,
+          updateModels,
         }}
       >
         <div className="flex">
@@ -182,6 +210,6 @@ export default function MainLayout({
           </ScrollShadow>
         </div>
       </AppContext.Provider>
-    </NextUIProvider>
+    </NextThemesProvider>
   );
 }

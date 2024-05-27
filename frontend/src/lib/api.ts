@@ -1,7 +1,8 @@
 import { IMG2IMG, TEXT2IMG } from "./const";
 
 
-const api = "https://rightly-assured-ray.ngrok-free.app/proxy/8000/";
+const api = "https://ideally-popular-dove.ngrok-free.app/proxy/8000";
+const kaggleBaseUrl = 'https://www.kaggle.com/api/v1';
 const get_opt = {
   method: "GET",
   headers: new Headers({
@@ -9,24 +10,32 @@ const get_opt = {
   }),
   // cache: "no-cache",
 };
+
+export const callApi = async (link: string, fetch_opt: { string: any }, type?: string) => {
+  try {
+    const res = await fetch(`${api}/${link}`, fetch_opt);
+    const data = await res.json();
+    return data
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
+
+}
 export const generateImg = async (data: FormData, type: string) => {
   try {
     const opt = {
       method: "POST",
       body: data,
     };
-    let res = {}
-    if (type === TEXT2IMG) {
-      res = await fetch(`${api}/text-to-img`, opt);
-    }
 
-    else if (type === IMG2IMG) {
-      res = await fetch(`${api}/img-to-img`, opt);
-    }
-    return res.json();
-  } catch (e) {
-    console.log(e);
-    return e;
+    const res = await fetch(`${api}/${type == TEXT2IMG ? "text-to-img" : "img-to-img"}`, opt);
+
+    const res_data = await res.json();
+    return res_data
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
   }
 };
 
@@ -70,5 +79,30 @@ export const getAllSelectedValues = async () => {
   } catch (error) {
     console.error(error);
     throw new Error(error.message);
+  }
+}
+
+export const getKernels = async () => {
+  console.log("calling kernel")
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-KAGGLE-USERNAME': "deephansda",
+    'X-KAGGLE-KEY': "73080a1f553d668ef182a9ce8d00ab8a"
+  };
+  try {
+    const response = await fetch(`${kaggleBaseUrl}/kernels/list`, {
+      method: 'GET',
+      headers: headers
+    });
+
+    if (response.ok) {
+      const kernelsList = await response.body();
+      console.log(kernelsList);
+      return kernelsList
+    } else {
+      console.error('Failed to fetch kernels list:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching kernels:', error);
   }
 }

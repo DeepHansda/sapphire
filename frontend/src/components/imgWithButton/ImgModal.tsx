@@ -93,6 +93,10 @@ export default function ImgModal({
                   <Spacer y={4} />
 
                   <div className="flex flex-wrap gap-4">
+                  <InfoItem
+                      title="seed"
+                      value={imgData?.seed?.toString()}
+                    />
                     <InfoItem
                       title="width"
                       value={imgData?.width?.toString()}

@@ -20,6 +20,7 @@ export interface GenerationType {
   steps: number;
   use_kerras: boolean;
   use_lora: boolean;
+  lora_scale: number;
   guidance_scale: number;
   batch_size: number;
   fixed_seed: boolean;

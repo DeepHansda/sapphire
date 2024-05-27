@@ -12,6 +12,7 @@ export type FormContextType = {
   allModelsState: AllModelsState;
   allImagesState: AllImagesState
   getSelectedValues: () => any
+  updateModels:(data:any)=>any
 };
 export const defaultFormData: GenerationType = {
   prompt: "",
@@ -23,6 +24,7 @@ export const defaultFormData: GenerationType = {
   steps: 20,
   use_kerras: false,
   use_lora: false,
+  lora_scale:0.75,
   guidance_scale: 8.0,
   batch_size: 1,
   fixed_seed: false,

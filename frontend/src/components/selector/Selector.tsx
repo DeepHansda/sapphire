@@ -1,56 +1,70 @@
-import { Select, SelectItem } from "@nextui-org/react";
-import React, { use, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+
 import { AppContext } from "../layouts/MainLayout";
+import { Select, Selection, SelectItem } from "@nextui-org/react";
 
 export default function Selector({
   label,
   data,
   variant,
   type,
+  selectedValues,
 }: {
-  label: string;
-  data: { string: any };
-  variant: string;
-  type: string;
+  label?: string;
+  data: string[];
+  variant?: string;
+  type?: string;
+  selectedValues?: { string: any };
 }) {
-  const { getSelectedValues, allModelsState } = useContext(AppContext);
-  const [selectedValue,setSelectedValue] = useState("");
-  useEffect(() => {
-    getSelectedValues();
-    const defaultkey = Object.keys(allModelsState.selectedModels).find(
-      (key) => key == type.slice(0, type.length - 1)
-    );
-  
-    const defaultValue = allModelsState.selectedModels[defaultkey];
-    setSelectedValue(defaultValue);
-  }, []);
+  // const [selectedValue, setSelectedValue] =useState<Selection>(new Set([]));
+  // const { updateModels } = useContext(AppContext);
+  // console.log(selectedValue);
+
+  // useEffect(() => {
+  //   setSelectedValue &&
+  //     setSelectedValue(selectedValues[type.slice(0, type.length - 1)]);
+  // }, []);
+
+  // const onSelectionChange = (value: string) => {
+  //   setSelectedValue(selectedValues[value]);
+  //   // const model_name = value.split("/").pop();
+
+  //   const data = {
+  //     model_name: value.currentKey,
+  //     model_type: type,
+  //   };
+
+  //   updateModels(data);
+  // };
 
   return (
-    <div className="font-poppins w-full">
-      <Select
-        className="capitalize"
-        size="sm"
-        label={label}
-        variant={variant}
-        // defaultOpen={defaultValue}
-        color="primary"
-        defaultSelectedKeys={[selectedValue]}
-        value={selectedValue}
-        // onChange={}
-      >
-        {data &&
-          Object.keys(data).map((d, index) => {
-       
-            return (
-              <SelectItem
-                title={d}
-                value={data[d]}
-                key={index}
-                className="capitalize"
-              />
-            );
-          })}
-      </Select>
-    </div>
+    // <div>
+    //   <Select
+    //     onSelectionChange={(value) => onSelectionChange(value)}
+    //     value={selectedValue}
+    //     label={type}
+    //     variant={variant}
+    //     defaultSelectedKeys={[selectedValue]}
+    //     className="w-[320px]"
+    //     // placeholder="Select an animal"
+    //   >
+    //     {Object.keys(data).map((key, index) => (
+    //       <SelectItem value={data[key]} key={key}>
+    //         {key}
+    //       </SelectItem>
+    //     ))}
+    //   </Select>
+    // </div>
+
+    <select defaultValue={data[0]}>
+      {
+        data.map((value, index) => (
+          <option key={index} value={value}>
+            {value}
+      </option>
+        ))
+      }
+      
+    </select>
   );
 }

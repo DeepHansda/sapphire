@@ -8,7 +8,7 @@ import {
   Slider,
   Switch,
 } from "@nextui-org/react";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import SidebarTitle from "./components/SidebarTitle";
 import { AppContext } from "../layouts/MainLayout";
 
@@ -28,7 +28,9 @@ const schedulers = [
 
 export default function Sidebar() {
   const { formDataState, handleFormState } = useContext(AppContext);
-
+  const [isFixedSeed, setIsFixedSeed] = useState(false);
+  const [isRandomSeed, setIsRandomSeed] = useState(false);
+console.log(isRandomSeed)
   return (
     <div className="w-auto h-screen ">
       <ScrollShadow
@@ -186,22 +188,55 @@ export default function Sidebar() {
               <div className="font-poppins">
                 <Input
                   variant="bordered"
+                  disabled={isFixedSeed}
                   size="sm"
                   type="number"
                   placeholder="Seed"
                   color="primary"
                   defaultValue={formDataState.seed.toString()}
-                  onChange={(e) => handleFormState({ seed: e.target.value })}
+                  value={formDataState.seed.toString()}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value != -1) {
+                      setIsRandomSeed(!isRandomSeed);
+                    }
+                    handleFormState({ seed: value });
+                  }}
                 />
-                <Switch
-                  defaultSelected
-                  size="sm"
-                  className="mt-4"
-                  isSelected={formDataState.fixed_seed}
-                  onValueChange={(e) => handleFormState({ fixed_seed: e })}
-                >
-                  Fixed Seed
-                </Switch>
+                <div>
+                  {formDataState.seed != -1 && (
+                    <Switch
+                      defaultSelected
+                      size="sm"
+                      className="mt-4"
+                      isSelected={isFixedSeed}
+                      onValueChange={() => {
+                        setIsFixedSeed(!isFixedSeed);
+                        setIsRandomSeed(false);
+                      }}
+                    >
+                      Fixed Seed
+                    </Switch>
+                  )}
+
+                  <Switch
+                    defaultSelected
+                    size="sm"
+                    className="mt-4"
+                    isSelected={isRandomSeed}
+                    onValueChange={(e) => {
+                      setIsRandomSeed(!isRandomSeed);
+                      console.log(e);
+                      if (e) {
+                        setIsFixedSeed(false);
+                        console.log(isFixedSeed);
+                        handleFormState({ seed: -1 });
+                      }
+                    }}
+                  >
+                    Random Seed
+                  </Switch>
+                </div>
               </div>
             </div>
           </div>

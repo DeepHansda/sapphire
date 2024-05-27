@@ -1,19 +1,34 @@
 "use client";
-import { Button, Divider, Spacer, Textarea } from "@nextui-org/react";
+import {
+  Button,
+  Divider,
+  Progress,
+  Slider,
+  Spacer,
+  Switch,
+  Textarea,
+} from "@nextui-org/react";
 import { usePathname } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { BiCog } from "react-icons/bi";
 import { AppContext } from "../layouts/MainLayout";
+import Selector from "../selector/Selector";
 
 export default function PromptBox() {
-  const { formDataState, handleFormState, handleFormSubmit } =
-    useContext(AppContext);
+  const {
+    formDataState,
+    handleFormState,
+    handleFormSubmit,
+    allModelsState,
+    allImagesState,
+  } = useContext(AppContext);
+  const [slideValue, setSlideValue] = useState(0);
+
   const pathname = usePathname().replace("/", "");
+  console.log(allImagesState);
 
   return (
-    <div>
-      <Divider className="my-6" />
-
+    <div className="w-full">
       <div className="w-full">
         <div className="w-full">
           <Textarea
@@ -46,21 +61,57 @@ export default function PromptBox() {
             }
           />
         </div>
-        <Spacer y={4} />
-        <div>
+
+        <div className="my-4">
+          <Switch
+            size="sm"
+            defaultSelected
+            isSelected={formDataState.use_lora}
+            onValueChange={(e) => handleFormState({ use_lora: e })}
+          >
+            Use Lora
+          </Switch>
+        </div>
+        {formDataState.use_lora && (
+          <div className="flex gap-x-6 items-center max-w-xl">
+            <Selector
+              data={allModelsState.allModels?.loras}
+              type="loras"
+              label="loras"
+              selectedValues={allModelsState.selectedModels}
+            />
+            <Slider
+              onChange={(value) => handleFormState({ lora_scale: value })}
+              step={0.01}
+              label="Lora Scale"
+              minValue={0}
+              maxValue={1}
+              size="sm"
+              value={formDataState.lora_scale}
+            />
+          </div>
+        )}
+        <div className="my-6">
           <Button
             color="primary"
             className="capitalize text-black font-bold"
             onClick={() => handleFormSubmit(formDataState, pathname)}
           >
-            <div className="animate-spin">
+            <div className={allImagesState.isLoading && "animate-spin"}>
               <BiCog size={20} />
             </div>
             generate
           </Button>
         </div>
       </div>
-      <Divider className="my-6" />
+      {allImagesState.isLoading && (
+        <Progress
+          size="sm"
+          isIndeterminate
+          aria-label="Loading..."
+          className="max-w-full "
+        />
+      )}
     </div>
   );
 }
