@@ -2,6 +2,7 @@
 /backend/src/input/
 /backend/src/output/
 /backend/**/__pycache__/
+/backend/src/shared_values.json
 
 
 # frontend 

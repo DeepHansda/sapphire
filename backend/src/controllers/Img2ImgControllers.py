@@ -35,8 +35,6 @@ class Img2ImgControllers:
 
         prompt = req.prompt
         negative_prompt = req.negative_prompt
-        width = req.width
-        height = req.height
         steps = req.steps
         guidance_scale = req.guidance_scale
         strength = req.strength
@@ -49,13 +47,17 @@ class Img2ImgControllers:
         print(seed)
 
         pipeline.scheduler = scheduler
-        img_size = (width, height)
+        # img_size = (width, height)
         in_image: Image.Image = Image.open((img_path), mode="r")
         in_image = ImageOps.exif_transpose(in_image)
         # in_image = in_image.resize((width, height))
-        in_image = ImageOps.fit(in_image, img_size)
+        # in_image = ImageOps.fit(in_image, img_size)
         in_image.tobytes("xbm", "rgb")
-        print(in_image.size)
+        image_size = in_image.size
+
+        width = image_size[0]
+        height = image_size[1]
+
         result: StableDiffusionPipelineOutput = pipeline(
             prompt=prompt,
             image=in_image,
@@ -68,6 +70,7 @@ class Img2ImgControllers:
             strength=strength,
             num_images_per_prompt=batch_size,
         )
+
         additional_data = {
             "tag": IMG2IMG_TAG,
             "prompt": prompt,
@@ -81,6 +84,7 @@ class Img2ImgControllers:
             "num_inference_steps": steps,
             "batch_size": batch_size,
         }
+
         images_length = len(result.images)
         if req.want_enc_imgs:
             img_data_json = diff_utils.handle_generated_images(
@@ -105,7 +109,7 @@ class Img2ImgControllers:
                 result.images,
                 metaData=additional_data,
                 base64_for_img=False,
-                tag=IMG2IMG_TAG
+                tag=IMG2IMG_TAG,
             )
             if images_length > 4:
                 return StreamingResponse(

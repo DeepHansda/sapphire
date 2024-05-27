@@ -2,7 +2,8 @@ from diffusers import AutoencoderKL, AutoPipelineForText2Image, StableDiffusionP
 import common.shared as sharedValues
 import torch
 import asyncio
-from common.const import INIT_DEVICE, CHECKPOINT
+from typing import Optional
+from common.const import INIT_DEVICE, CHECKPOINT, LORA
 from diffusers import (
     DDIMScheduler,
     DDPMScheduler,
@@ -35,6 +36,8 @@ class PipelineComponents:
         sd_model_path = self.sharedValues.get(CHECKPOINT)
         print("pipeline setup : " + sd_model_path)
         vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+        if self.device == "cuda":
+            torch.cuda.empty_cache()
         if vae_path:
             vae = AutoencoderKL.from_single_file(
                 vae_path, torch_dtype=self.torch_float
@@ -51,8 +54,36 @@ class PipelineComponents:
         )
         self.component_pipeline = comp_pipeline
 
-    def get_pipeline(self) -> StableDiffusionPipeline:
-        return self.component_pipeline
+    def get_pipeline(self, ues_lora: Optional[bool] = False) -> StableDiffusionPipeline:
+        if ues_lora == True:
+
+            lora_path = self.sharedValues.get(LORA)
+            print(lora_path)
+            # lora = "sapphire/backend/src/models/loras/ghibli_style_offset.safetensors"
+            lora_weight_name = lora_path.split("/")[-1]
+            lora_apdapter_name = lora_weight_name.split(".")[0]
+
+            active_adapters = self.component_pipeline.get_active_adapters()
+            if len(active_adapters) > 0 and lora_apdapter_name == active_adapters[0]:
+                print(active_adapters)
+                return self.component_pipeline
+
+            # print(lora_weight_name)
+            # print(lora_apdapter_name)
+            if len(active_adapters) > 0:
+                self.component_pipeline.unload_lora_weights()
+                self.component_pipeline.unfuse_lora()
+            self.component_pipeline.load_lora_weights(
+                lora_path, weight_name=lora_weight_name, adapter_name=lora_apdapter_name
+            )
+            # self.component_pipeline = lora_pipeline
+            return self.component_pipeline
+        else:
+            self.component_pipeline.unload_lora_weights()
+            self.component_pipeline.unfuse_lora()
+            active_adapters = self.component_pipeline.get_active_adapters()
+            print(active_adapters)
+            return self.component_pipeline
 
     def get_scheduler(self, scheduler_name: str, use_kerras: bool = False):
 

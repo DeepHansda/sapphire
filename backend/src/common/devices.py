@@ -21,7 +21,7 @@ async def set_device_in_shared(device: str):
     init_device = {}
     init_device[INIT_DEVICE] = device
 
-    save_shared_values(init_device)
+    save_shared_values(init_device,save=True)
 
 
 async def set_device():

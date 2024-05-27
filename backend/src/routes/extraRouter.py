@@ -31,7 +31,7 @@ async def get_all_models():
     return res
 
 
-@extra_router.post("/get-models-by-type")
+@extra_router.post("/change-models-by-type")
 async def get_models_by_type(req:Model_Request_Type):
     res = await modelsController.change_model_by_type(req.model_name, req.model_type)
     return res

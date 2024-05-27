@@ -5,6 +5,8 @@ import common.Folder_Paths as Folder_Paths
 from common.startup import startUp
 import threading
 import time
+
+
 # def startUp_event():
 #     result = startUp()
 #     # print(result)
@@ -30,7 +32,15 @@ def startUp_event():
 
 
 def start_server():
-    cmd = ["uvicorn", "main:app", "--reload"]
+    cmd = [
+        "uvicorn",
+        "main:app",
+        "--reload",
+        "--reload-exclude",
+        "sapphire/backend/src/output",
+        "--reload-include",
+        "sapphire/backend/src/shared_values.json",
+    ]
     cb = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     for line in cb.stdout:
@@ -53,4 +63,3 @@ if __name__ == "__main__":
     # Wait for both threads to finish
     startUp_thread.join()
     start_server_thread.join()
-

@@ -11,7 +11,7 @@ from fastapi.requests import Request
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
 from common.PipelineComponents import PipelineComponents
-from common.Utils import FileChangeHandler
+
 from fastapi.responses import JSONResponse
 
 from routes.extraRouter import extra_router
@@ -36,19 +36,25 @@ async def changeHandler():
         print(changes)
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    try:
-        await changeHandler()
-    except Exception as e:
-        print(e)
-    yield
-    asyncio.get_event_loop().stop()
-    print("main shutdown")
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     run_process(main_shared_file_path,target=changesMade())
+#     yield
+#     asyncio.get_event_loop().stop()
+#     print("main shutdown")
 
 
 app = FastAPI()
+# main_app_lifespan = app.router.lifespan_context
 
+# @asynccontextmanager
+# async def lifespan_wrapper(app):
+#     await arun_process(main_shared_file_path,target=changesMade())
+#     async with main_app_lifespan(app) as maybe_state:
+#         yield maybe_state
+#     print("sub shutdown")
+
+# app.router.lifespan_context = lifespan_wrapper
 
 origins = ["*", "http://localhost:3000"]
 

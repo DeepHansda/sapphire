@@ -17,7 +17,8 @@ class Text2Image_Type:
     guidance_scale: float = Form(7.5)
     use_lora: bool = Form(False)
     batch_size: int = Form(1)
-    want_enc_imgs:bool = Form(False)
+    want_enc_imgs: bool = Form(False)
+    lora_scale: float = Form(0.75)
 
     # prompt: str
     # negative_prompt: str
@@ -41,7 +42,7 @@ class Text2Image_Type:
 
 @dataclass
 class Image2Image_Type(Text2Image_Type):
-    strength:float = Form(...)
+    strength: float = Form(...)
     image: UploadFile = File(...)
 
 
