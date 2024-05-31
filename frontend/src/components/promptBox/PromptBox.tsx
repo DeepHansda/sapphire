@@ -28,7 +28,7 @@ export default function PromptBox() {
   console.log(allImagesState);
 
   return (
-    <div className="w-full">
+    <div className="w-full z-0">
       <div className="w-full">
         <div className="w-full">
           <Textarea
@@ -75,7 +75,7 @@ export default function PromptBox() {
         {formDataState.use_lora && (
           <div className="flex gap-x-6 items-center max-w-xl">
             <Selector
-              data={allModelsState.allModels?.loras}
+              data={allModelsState.allModels.all_models?.loras}
               type="loras"
               label="loras"
               selectedValues={allModelsState.selectedModels}
@@ -100,7 +100,7 @@ export default function PromptBox() {
             <div className={allImagesState.isLoading && "animate-spin"}>
               <BiCog size={20} />
             </div>
-            generate
+            {allImagesState.isLoading ?"generating":"generate"}
           </Button>
         </div>
       </div>
@@ -109,6 +109,7 @@ export default function PromptBox() {
           size="sm"
           isIndeterminate
           aria-label="Loading..."
+          color="success"
           className="max-w-full "
         />
       )}

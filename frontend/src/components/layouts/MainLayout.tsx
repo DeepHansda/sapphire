@@ -4,7 +4,7 @@ import {
   generateImg,
   getAllModels,
   getAllSelectedValues,
-  getImagesByTag
+  getImagesByTag,
 } from "@/lib/api";
 import { defaultFormData, FormContextType } from "@/lib/AppContext";
 import { imageReducersConst, modelsReducersConst } from "@/lib/const";
@@ -17,15 +17,16 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { useRouter } from "next/navigation";
 import { createContext, useReducer, useState } from "react";
-import Navbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 
 import {
   initialModelsState,
   modelsReducers,
 } from "@/lib/stateMangement/reducers/modelsReducers";
+import AppNavbar from "../appNavbar/AppNavbar";
+import { AppContextType } from "@/lib/types";
 
-export const AppContext = createContext<FormContextType>({
+export const AppContext = createContext<AppContextType>({
   formDataState: defaultFormData,
   handleFormState: (v: any) => {},
   generatedResponse: {},
@@ -34,13 +35,15 @@ export const AppContext = createContext<FormContextType>({
   allImagesState: initialImagesState,
   getModels: () => {},
   allModelsState: initialModelsState,
-  getSelectedValues: () => {},
   updateModels: (model: any) => {},
+  openSidebar: false,
+  setOpenSidebar: () => {},
 });
 
 export default function MainLayout({ children, ...props }: ThemeProviderProps) {
   const [formDataState, setFormDataState] = useState(defaultFormData);
   const [generatedResponse, setGeneratedResponse] = useState({});
+  const [openSidebar, setOpenSidebar] = useState(false);
   const [imagesState, imagesDispatch] = useReducer(
     imagesReducers,
     initialImagesState
@@ -132,26 +135,6 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
       });
   };
 
-  const getSelectedValues = () => {
-    modelsDispatch({
-      type: modelsReducersConst.modelsRequest,
-    });
-    getAllSelectedValues()
-      .then((result) => {
-        console.log(result);
-        modelsDispatch({
-          type: modelsReducersConst.selectModels,
-          payload: result,
-        });
-      })
-      .catch((error) => {
-        modelsDispatch({
-          type: modelsReducersConst.modelsError,
-          payload: error,
-        });
-      });
-  };
-
   const updateModels = (data: any) => {
     modelsDispatch({
       type: modelsReducersConst.modelsRequest,
@@ -168,9 +151,10 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
       .then((result) => {
         console.log(result);
         modelsDispatch({
-          type: modelsReducersConst.selectModels,
+          type: modelsReducersConst.getAllModels,
           payload: result,
         });
+        getModels();
       })
       .catch((error) => {
         modelsDispatch({
@@ -192,21 +176,21 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
           allImagesState: imagesState,
           getModels,
           allModelsState: modlesState,
-          getSelectedValues,
           updateModels,
+          openSidebar,
+          setOpenSidebar,
         }}
       >
-        <div className="flex">
+        <div className="flex relative">
           <Sidebar />
           <ScrollShadow
             size={60}
             offset={40}
-            className="scrollbar-thin scrollbar-thumb-rounded-[100%] w-full max-h-screen p-6 relative"
+            className="scrollbar-thin scrollbar-thumb-rounded-[100%] w-full max-h-screen  relative"
           >
-            <div className="fixed">
-              <Navbar />
-            </div>
-            <div className="mt-32">{children}</div>
+            <AppNavbar />
+
+            <div className="p-6">{children}</div>
           </ScrollShadow>
         </div>
       </AppContext.Provider>

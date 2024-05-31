@@ -1,19 +1,9 @@
 // "use client"
 // import { createContext } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { AllImagesState, GenerationType, AllModelsState } from "./types";
 import { initialModelsState } from "@/lib/stateMangement/reducers/modelsReducers";
-export type FormContextType = {
-  formDataState: GenerationType;
-  generatedResponse: {};
-  handleFormState: (v: any) => void;
-  handleFormSubmit: (obj: { [key: string]: any }, type: string) => any;
-  getImages: (tag: string) => any;
-  getModels: () => any;
-  allModelsState: AllModelsState;
-  allImagesState: AllImagesState
-  getSelectedValues: () => any
-  updateModels:(data:any)=>any
-};
+
 export const defaultFormData: GenerationType = {
   prompt: "",
   negative_prompt: "",

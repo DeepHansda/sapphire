@@ -11,6 +11,7 @@ import {
 import { useContext, useState, useEffect } from "react";
 import SidebarTitle from "./components/SidebarTitle";
 import { AppContext } from "../layouts/MainLayout";
+import { BiX } from "react-icons/bi";
 
 const num_of_imgs_list = [1, 2, 3, 4, 5, 6, 7, 8];
 const schedulers = [
@@ -27,19 +28,30 @@ const schedulers = [
 ];
 
 export default function Sidebar() {
-  const { formDataState, handleFormState } = useContext(AppContext);
+  const { formDataState, handleFormState, openSidebar ,setOpenSidebar} =
+    useContext(AppContext);
   const [isFixedSeed, setIsFixedSeed] = useState(false);
   const [isRandomSeed, setIsRandomSeed] = useState(false);
-console.log(isRandomSeed)
+  console.log(openSidebar);
   return (
-    <div className="w-auto h-screen ">
+    <div
+      className={`w-auto h-screen  backdrop-blur-lg bg-[#27272a60] absolute left-[-100%] z-20  xl:relative xl:left-0`}
+    >
       <ScrollShadow
         size={80}
         offset={10}
         orientation="vertical"
-        className="w-[300px] max-h-screen scrollbar-thin  p-6"
+        className="w-[300px] max-h-screen scrollbar-thin  "
       >
-        <div className=" ">
+            <div className="flex justify-between items-center p-3">
+              <div><h1 className="text-2xl font-bold">Sapphire</h1></div>
+              <div>
+              <BiX className="text-2xl cursor-pointer"
+                onClick={() => setOpenSidebar(false)}/>
+              </div>
+            </div>
+            <Divider />
+        <div className="px-6 py-2">
           <div>
             <div className="flex flex-col gap-y-6">
               <SidebarTitle title="image dimentions" />

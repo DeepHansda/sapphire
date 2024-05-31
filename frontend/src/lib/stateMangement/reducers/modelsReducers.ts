@@ -1,6 +1,8 @@
 export const initialModelsState = {
-    allModels: {},
-    selectedModels: {},
+    allModels: {
+        all_models: {},
+        selected_models: {}
+    },
     isLoading: false,
     message: ""
 }
@@ -21,13 +23,6 @@ export const modelsReducers = (state = initialModelsState, action) => {
                 isLoading: false,
                 allModels: payload,
                 message: "all models loaded!"
-            }
-        case modelsReducersConst.selectModels:
-            return {
-                ...state,
-                isLoading: false,
-                selectedModels: payload,
-                message: "all selected models loaded!"
             }
         case modelsReducersConst.modelsError:
             return {

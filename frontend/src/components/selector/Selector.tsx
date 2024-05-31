@@ -1,41 +1,39 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../layouts/MainLayout";
-import { Select, Selection, SelectItem } from "@nextui-org/react";
 
 export default function Selector({
   label,
   data,
   variant,
+  defaultValue,
   type,
-  selectedValues,
 }: {
   label?: string;
-  data: string[];
+  data: { string: any };
   variant?: string;
-  type?: string;
-  selectedValues?: { string: any };
+  defaultValue: string;
+  type: string;
 }) {
-  // const [selectedValue, setSelectedValue] =useState<Selection>(new Set([]));
-  // const { updateModels } = useContext(AppContext);
-  // console.log(selectedValue);
+  const [selectedValue, setSelectedValue] = useState("");
+  const { updateModels, getModels } = useContext(AppContext);
+  console.log(defaultValue);
 
-  // useEffect(() => {
-  //   setSelectedValue &&
-  //     setSelectedValue(selectedValues[type.slice(0, type.length - 1)]);
-  // }, []);
+  useEffect(() => {
+    setSelectedValue(defaultValue);
+  }, [defaultValue]);
+  const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedValue(value);
+    // const model_name = value.split("/").pop();
 
-  // const onSelectionChange = (value: string) => {
-  //   setSelectedValue(selectedValues[value]);
-  //   // const model_name = value.split("/").pop();
+    const changedData = {
+      model_name: value.split("/").pop(),
+      model_type: type,
+    };
 
-  //   const data = {
-  //     model_name: value.currentKey,
-  //     model_type: type,
-  //   };
-
-  //   updateModels(data);
-  // };
+    updateModels(changedData);
+  };
 
   return (
     // <div>
@@ -55,16 +53,26 @@ export default function Selector({
     //     ))}
     //   </Select>
     // </div>
-
-    <select defaultValue={data[0]}>
-      {
-        data.map((value, index) => (
-          <option key={index} value={value}>
-            {value}
-      </option>
-        ))
-      }
-      
-    </select>
+    <div className="bg-default rounded-lg hover:outline hover:outline-1 hover:outline:slate-200">
+      <div >
+        <label htmlFor="selector" className="text-sm capitalize p-2">{type}</label>
+      </div>
+      <select
+        className="bg-gray-900 p-2 rounded-md hover:bg-gray-800 "
+        onChange={onSelectionChange}
+        value={selectedValue}
+        id="selector"
+      >
+        <option value={undefined}>None</option>
+        {Object.keys(data).map((key, index) => {
+          console.log(data[key]);
+          return (
+            <option key={key} value={data[key]}>
+              {key}
+            </option>
+          );
+        })}
+      </select>
+    </div>
   );
 }
