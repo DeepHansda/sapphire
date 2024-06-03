@@ -3,6 +3,7 @@ uvicorn[standard]
 diffusers[torch] 
 transformers
 xformers
+accelerate
 peft
 python-dotenv
 python-multipart

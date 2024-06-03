@@ -1,6 +1,6 @@
 from typing import Annotated, Dict
 
-import common.shared as sharedValues
+
 from common.Utils import Utils
 from controllers.ModelsControllers import ModelsController
 from fastapi import APIRouter, Path, Response, status
@@ -37,10 +37,3 @@ async def get_models_by_type(req:Model_Request_Type):
     return res
 
 
-@extra_router.get("/get-selected-values")
-async def get_selected_values():
-        res = await sharedValues.retrive_shared_values(shared_values=None)
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content=res,
-        )

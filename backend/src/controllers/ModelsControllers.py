@@ -12,7 +12,7 @@ from fastapi.responses import JSONResponse
 from common.const import CHECKPOINT, CHECKPOINTS, LORAS, LORA
 from controllers.Img2ImgControllers import Img2ImgControllers
 from controllers.Text2ImgControllers import Text2ImgControllers
-
+import common.shared as sharedValues
 from importlib import reload
 
 
@@ -57,8 +57,18 @@ class ModelsController:
 
     async def get_all_models(self):
         try:
+            selected_models = await sharedValues.retrive_shared_values(
+                shared_values=None
+            )
+
             all_models_dic = commonUtils.get_all_models()
-            return JSONResponse(status_code=status.HTTP_200_OK, content=all_models_dic)
+            final_models_data = {}
+            final_models_data["all_models"] = all_models_dic
+            final_models_data["selected_models"] = selected_models
+
+            return JSONResponse(
+                status_code=status.HTTP_200_OK, content=final_models_data
+            )
         except Exception as e:
             return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
@@ -86,6 +96,11 @@ class ModelsController:
         tasks.add_task(init_save)
 
         updated_values = save_shared_values(model)
+        all_models_dic = commonUtils.get_all_models()
+        final_models_data = {}
+        final_models_data["all_models"] = all_models_dic
+        final_models_data["selected_models"] = updated_values
+
         return JSONResponse(
-            status_code=status.HTTP_200_OK, content=updated_values, background=tasks
+            status_code=status.HTTP_200_OK, content=final_models_data, background=tasks
         )
