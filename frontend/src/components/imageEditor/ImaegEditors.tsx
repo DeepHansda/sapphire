@@ -66,7 +66,7 @@ export const ImageEditors: React.FC = () => {
           />
         </div>
         <Spacer y={6}/>
-        <div className="relative w-[360px] h-full">
+        <div className="relative w-full md:w-[360px]  h-full border border-zinc-600 rounded-md overflow-clip">
           <Image
             src={previewImage}
             alt="previewImg"

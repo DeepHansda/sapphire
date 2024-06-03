@@ -17,7 +17,7 @@ export default function Img2Img() {
   console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <div className="flex w-full justify-between gap-x-20">
+      <div className="flex flex-col w-full md:flex-row  justify-between  gap-4">
         <PromptBox />
         <ImageEditors />
       </div>

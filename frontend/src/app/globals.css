@@ -29,4 +29,10 @@
   padding: 0;
   box-sizing: border-box;
 }
+body{
+  background: transparent;
+  background-image: url("/bg3.jpg");
+  background-position: center;
+  background-size:contain;
+}
 

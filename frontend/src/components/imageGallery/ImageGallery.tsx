@@ -13,7 +13,7 @@ export default function ImageGallery({ img_list }: { img_list: any }) {
           <Fragment key={index}>
             <Divider className="my-4" />
             <div>{`${date.getFullYear()}`}</div>
-            <div className="grid md:grid-cols-2 gap-6 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid md:grid-cols-2 gap-6 lg:grid-cols-3 2xl:grid-cols-4">
               {galleryData?.sub_dir_images?.map((img, imgIndex) => (
                 <div key={imgIndex}>
                   <ImgWithButton

@@ -8,10 +8,11 @@ import {
   Slider,
   Switch,
 } from "@nextui-org/react";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, ChangeEvent } from "react";
 import SidebarTitle from "./components/SidebarTitle";
 import { AppContext } from "../layouts/MainLayout";
 import { BiX } from "react-icons/bi";
+import Selector from "../selector/Selector";
 
 const num_of_imgs_list = [1, 2, 3, 4, 5, 6, 7, 8];
 const schedulers = [
@@ -28,14 +29,20 @@ const schedulers = [
 ];
 
 export default function Sidebar() {
-  const { formDataState, handleFormState, openSidebar ,setOpenSidebar} =
+  const { formDataState, handleFormState, openSidebar, setOpenSidebar } =
     useContext(AppContext);
   const [isFixedSeed, setIsFixedSeed] = useState(false);
   const [isRandomSeed, setIsRandomSeed] = useState(false);
+  const [sidebarStyle, setSidebarStyle] = useState("");
   console.log(openSidebar);
+  // const sidebarStyle = !openSidebar ? "left:[-1000px]" : "left:0";
+  console.log(sidebarStyle);
+  useEffect(() => {
+    setSidebarStyle(openSidebar ? "left:0" : "right:[1000px]");
+  }, [openSidebar]);
   return (
     <div
-      className={`w-auto h-screen  backdrop-blur-lg bg-[#27272a60] absolute left-[-100%] z-20  xl:relative xl:left-0`}
+      className={`w-auto h-screen  backdrop-blur-lg bg-[#27272a9a] z-40 ease-in-out   duration-[450ms]  absolute ${sidebarStyle}`}
     >
       <ScrollShadow
         size={80}
@@ -43,14 +50,18 @@ export default function Sidebar() {
         orientation="vertical"
         className="w-[300px] max-h-screen scrollbar-thin  "
       >
-            <div className="flex justify-between items-center p-3">
-              <div><h1 className="text-2xl font-bold">Sapphire</h1></div>
-              <div>
-              <BiX className="text-2xl cursor-pointer"
-                onClick={() => setOpenSidebar(false)}/>
-              </div>
-            </div>
-            <Divider />
+        <div className="flex justify-between items-center p-3">
+          <div>
+            <h1 className="text-2xl font-bold">Sapphire</h1>
+          </div>
+          <div>
+            <BiX
+              className="text-2xl cursor-pointer"
+              onClick={() => setOpenSidebar(false)}
+            />
+          </div>
+        </div>
+        <Divider />
         <div className="px-6 py-2">
           <div>
             <div className="flex flex-col gap-y-6">
@@ -166,23 +177,14 @@ export default function Sidebar() {
             <div className="flex flex-col gap-y-6">
               <SidebarTitle title="schedulers" />
               <div className="font-poppins">
-                <Select
-                  size="sm"
-                  label="Select Scheduler"
-                  variant="bordered"
-                  color="primary"
+                <Selector
+                  data={schedulers}
+                  label="schedulers"
+                  defaultValue={schedulers[0]}
                   onChange={(e) =>
                     handleFormState({ scheduler: e.target.value })
                   }
-                >
-                  {schedulers.map((scheduler, index) => (
-                    <SelectItem
-                      title={scheduler}
-                      value={scheduler}
-                      key={scheduler}
-                    />
-                  ))}
-                </Select>
+                />
                 <Switch
                   defaultSelected
                   size="sm"

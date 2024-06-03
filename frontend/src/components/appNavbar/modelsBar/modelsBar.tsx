@@ -9,10 +9,10 @@ import {
   NavbarItem,
   Progress,
 } from "@nextui-org/react";
-import { useContext, useEffect } from "react";
+import { ChangeEvent, useContext, useEffect } from "react";
 import { FaBars } from "react-icons/fa6";
 function ModelsBar() {
-  const { allModelsState, getModels, setOpenSidebar } = useContext(AppContext);
+  const { allModelsState, getModels, setOpenSidebar,updateModels } = useContext(AppContext);
   console.log(allModelsState);
   useEffect(() => {
     getModels();
@@ -27,6 +27,20 @@ function ModelsBar() {
       return { models, defaultModel };
     }
     return null;
+  };
+
+  const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    const type = e.target.options.selectedIndex;
+    // const model_name = value.split("/").pop();
+
+    console.log(type)
+    const changedData = {
+      model_name: value.split("/").pop(),
+      model_type: type,
+    };
+
+    // updateModels(changedData);
   };
   return (
     <div>
@@ -88,8 +102,7 @@ function ModelsBar() {
                           label={key}
                           variant="bordered"
                           defaultValue={filteredModels?.defaultModel}
-                          type={key}
-                        />
+                         />
                       </NavbarItem>
                     );
                   }

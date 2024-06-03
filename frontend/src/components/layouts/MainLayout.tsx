@@ -165,7 +165,7 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
   };
 
   return (
-    <NextThemesProvider {...props}>
+    <NextThemesProvider defaultTheme="dark" {...props}>
       <AppContext.Provider
         value={{
           formDataState,
@@ -181,7 +181,7 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
           setOpenSidebar,
         }}
       >
-        <div className="flex relative">
+        <div className="flex relative w-full h-screen backdrop-blur-lg bg-[#0000007d]">
           <Sidebar />
           <ScrollShadow
             size={60}

@@ -7,71 +7,46 @@ export default function Selector({
   data,
   variant,
   defaultValue,
-  type,
+  onChange,
 }: {
-  label?: string;
-  data: { string: any };
+  label: string;
+  data: { string: any } | any[];
   variant?: string;
   defaultValue: string;
-  type: string;
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }) {
   const [selectedValue, setSelectedValue] = useState("");
   const { updateModels, getModels } = useContext(AppContext);
-  console.log(defaultValue);
+  console.log(Array.isArray(data));
 
-  useEffect(() => {
-    setSelectedValue(defaultValue);
-  }, [defaultValue]);
-  const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setSelectedValue(value);
-    // const model_name = value.split("/").pop();
-
-    const changedData = {
-      model_name: value.split("/").pop(),
-      model_type: type,
-    };
-
-    updateModels(changedData);
-  };
 
   return (
-    // <div>
-    //   <Select
-    //     onSelectionChange={(value) => onSelectionChange(value)}
-    //     value={selectedValue}
-    //     label={type}
-    //     variant={variant}
-    //     defaultSelectedKeys={[selectedValue]}
-    //     className="w-[320px]"
-    //     // placeholder="Select an animal"
-    //   >
-    //     {Object.keys(data).map((key, index) => (
-    //       <SelectItem value={data[key]} key={key}>
-    //         {key}
-    //       </SelectItem>
-    //     ))}
-    //   </Select>
-    // </div>
-    <div className="bg-default rounded-lg hover:outline hover:outline-1 hover:outline:slate-200">
-      <div >
-        <label htmlFor="selector" className="text-sm capitalize p-2">{type}</label>
+        <div className="bg-[#1f293765] backdrop-blur-md rounded-lg hover:outline hover:outline-1 hover:outline:slate-200">
+      <div>
+        <label htmlFor="selector" className="text-sm capitalize p-2">
+          {label}
+        </label>
       </div>
       <select
-        className="bg-gray-900 p-2 rounded-md hover:bg-gray-800 "
-        onChange={onSelectionChange}
-        value={selectedValue}
+        className="bg-default  p-2 rounded-md hover:bg-gray-800 "
+        onChange={onChange}
+        defaultValue={defaultValue}
+        // value={selectedValue}
+        // onSelect={(e)=>setSelectedValue(e.)}
         id="selector"
       >
         <option value={undefined}>None</option>
-        {Object.keys(data).map((key, index) => {
-          console.log(data[key]);
-          return (
-            <option key={key} value={data[key]}>
-              {key}
-            </option>
-          );
-        })}
+        {Array.isArray(data) ? data?.map((value, index) => (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            )):
+           Object.keys(data).map((key, index) => (
+              <option key={key} value={data[key]}>
+                {key}
+              </option>
+            ))
+           }
       </select>
     </div>
   );

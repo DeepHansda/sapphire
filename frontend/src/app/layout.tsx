@@ -2,6 +2,7 @@
 import MainLayout from "@/components/layouts/MainLayout";
 import type { Metadata } from "next";
 import "./globals.css";
+import { Vortex } from "@/components/ui/Vortex";
 
 
 
@@ -19,9 +20,10 @@ export default function RootLayout({
 
     <html lang="en">
       <body className="w-full h-screen overflow-hidden">
-        <MainLayout>
+        <MainLayout >
           {children}
         </MainLayout>
+      
       </body>
     </html>
 
