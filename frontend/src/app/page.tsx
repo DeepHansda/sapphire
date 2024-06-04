@@ -2,25 +2,22 @@
 import ImageGallery from "@/components/imageGallery/ImageGallery";
 import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
-import { getKernels } from "@/lib/api";
-
+import { TEXT2IMG } from "@/lib/const";
 import { useContext, useEffect } from "react";
 
-export default function Home() {
-  const { handleFormSubmit, generatedResponse } = useContext(AppContext);
-  useEffect(() => {
-    getKernels()
-      .then((kernels) => {
-        console.log(kernels);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+export default function Text2Img() {
+  const { getImages, allImagesState, handleFormSubmit } =
+    useContext(AppContext);
 
+  useEffect(() => {
+    getImages(TEXT2IMG);
+  }, []);
+  console.log(allImagesState);
   return (
     <main className="w-full h-auto">
-      <PromptBox handleFormSubmit={handleFormSubmit} />
+      <PromptBox />
       <div>
-        <ImageGallery generatedResponse={generatedResponse} />
+        <ImageGallery img_list={allImagesState?.text2img_list} />
       </div>
     </main>
   );
