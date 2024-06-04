@@ -3,10 +3,14 @@ import Link from "next/link";
 import ModelsBar from "./modelsBar/modelsBar";
 import { usePathname } from "next/navigation";
 
-const tab_list = [{ title: "text2img", link: "/" }, { name: "img2img", link: "/img2img" }, { name: "text2vid", link: "/text2vid" }];
+const tab_list = [
+  { title: "text2img", link: "/" },
+  { title: "img2img", link: "/img2img" },
+  { title: "text2vid", link: "/text2vid" },
+];
 export default function AppNavbar() {
   const models = ["model1", "model2", "model3"];
-  const path = usePathname()
+  const path = usePathname();
 
   return (
     <div>
@@ -22,8 +26,11 @@ export default function AppNavbar() {
           {tab_list.map((tab, index) => (
             <NavbarItem
               key={index}
-              className={`text-sm font-normal  p-2 uppercase rounded-lg hover:bg-default-100 hover:text-zinc-400 shadow-sm ${path == tab.link ? "text-slate-950  bg-primary" : "bg-transparent"
-                }`}
+              className={`text-sm font-normal  p-2 uppercase rounded-lg hover:bg-default-100 hover:text-zinc-400 shadow-sm ${
+                path == tab.link
+                  ? "text-slate-950  bg-primary"
+                  : "bg-transparent"
+              }`}
             >
               <Link href={tab.link} className="" key={index}>
                 {tab.title}

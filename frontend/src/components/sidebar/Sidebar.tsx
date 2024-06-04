@@ -36,13 +36,13 @@ export default function Sidebar() {
   const [sidebarStyle, setSidebarStyle] = useState("");
   console.log(openSidebar);
   // const sidebarStyle = !openSidebar ? "left:[-1000px]" : "left:0";
-  console.log(sidebarStyle);
+  console.log(formDataState);
   useEffect(() => {
     setSidebarStyle(openSidebar ? "left:0" : "right:[1000px]");
   }, [openSidebar]);
   return (
     <div
-      className={`w-auto h-screen  backdrop-blur-lg bg-[#27272a9a] z-40 ease-in-out   duration-[450ms]  absolute ${sidebarStyle}`}
+      className={`w-auto h-screen  backdrop-blur-lg bg-[#27272a9a] z-40 ease-in-out xl:ralative xl:left-0  duration-[450ms]`}
     >
       <ScrollShadow
         size={80}
@@ -211,7 +211,7 @@ export default function Sidebar() {
                   value={formDataState.seed.toString()}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (value != -1) {
+                    if (value != "-1") {
                       setIsRandomSeed(!isRandomSeed);
                     }
                     handleFormState({ seed: value });

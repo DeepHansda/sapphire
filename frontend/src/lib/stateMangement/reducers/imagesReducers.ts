@@ -1,13 +1,15 @@
 import { imageReducersConst, IMG2IMG, TEXT2IMG } from "@/lib/const"
+import { AllImagesState } from "@/lib/types"
 
 
 
-export const initialImagesState = {
+export const initialImagesState: AllImagesState = {
     text2img_list: [],
     img2img_list: [],
     isLoading: false,
     message: ""
 }
+
 export const imagesReducers = (state = initialImagesState, action) => {
     const { type, payload } = action
     switch (type) {

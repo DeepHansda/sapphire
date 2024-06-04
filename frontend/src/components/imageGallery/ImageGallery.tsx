@@ -4,7 +4,7 @@ import NextImage from "next/image";
 import React, { Fragment } from "react";
 import ImgWithButton from "../imgWithButton/ImgWithButton";
 
-export default function ImageGallery({ img_list }: { img_list: any }) {
+export default function ImageGallery({ img_list }: { img_list: any[] }) {
   return (
     <div className="w-full">
       {img_list?.map((galleryData, index) => {

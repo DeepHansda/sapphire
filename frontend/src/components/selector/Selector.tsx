@@ -10,7 +10,7 @@ export default function Selector({
   onChange,
 }: {
   label: string;
-  data: { string: any } | any[];
+  data: { [key: string]: any } | any[];
   variant?: string;
   defaultValue: string;
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -19,9 +19,8 @@ export default function Selector({
   const { updateModels, getModels } = useContext(AppContext);
   console.log(Array.isArray(data));
 
-
   return (
-        <div className="bg-[#1f293765] backdrop-blur-md rounded-lg hover:outline hover:outline-1 hover:outline:slate-200">
+    <div className="bg-[#1f293765] backdrop-blur-md rounded-lg hover:outline hover:outline-1 hover:outline:slate-200">
       <div>
         <label htmlFor="selector" className="text-sm capitalize p-2">
           {label}
@@ -36,17 +35,17 @@ export default function Selector({
         id="selector"
       >
         <option value={undefined}>None</option>
-        {Array.isArray(data) ? data?.map((value, index) => (
+        {Array.isArray(data)
+          ? data?.map((value, index) => (
               <option key={index} value={value}>
                 {value}
               </option>
-            )):
-           Object.keys(data).map((key, index) => (
+            ))
+          : Object.keys(data).map((key, index) => (
               <option key={key} value={data[key]}>
                 {key}
               </option>
-            ))
-           }
+            ))}
       </select>
     </div>
   );

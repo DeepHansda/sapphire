@@ -11,7 +11,7 @@ const get_opt = {
   // cache: "no-cache",
 };
 
-export const callApi = async (link: string, fetch_opt: { string: any }, type?: string) => {
+export const callApi = async (link: string, fetch_opt: { [key: string]: any }, type?: string) => {
   try {
     const res = await fetch(`${api}/${link}`, fetch_opt);
     const data = await res.json();

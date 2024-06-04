@@ -33,19 +33,20 @@ export interface GenerationType {
 
 export interface AllImagesState {
   message: any;
-  text2img_list: [],
-  img2img_list: [],
+  text2img_list: any[],
+  img2img_list: any[],
   isLoading: boolean;
 }
 
 export interface AllModelsState {
   allModels: {
-    all_models: {},
-    selected_models: {}
+    all_models: { [key: string]: any },
+    selected_models: { [key: string]: any }
   },
   isLoading: boolean,
   message: string
 }
+
 export interface AppContextType {
   formDataState: GenerationType;
   generatedResponse: {};
@@ -55,7 +56,6 @@ export interface AppContextType {
   getModels: () => any;
   allModelsState: AllModelsState;
   allImagesState: AllImagesState
-  getSelectedValues: () => any
   updateModels: (data: any) => any
   openSidebar: boolean
   setOpenSidebar: Dispatch<SetStateAction<boolean>>

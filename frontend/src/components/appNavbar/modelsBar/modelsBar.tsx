@@ -11,8 +11,24 @@ import {
 } from "@nextui-org/react";
 import { ChangeEvent, useContext, useEffect } from "react";
 import { FaBars } from "react-icons/fa6";
+
+export const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
+  const value = e.target.value;
+  const type = e.target.options.selectedIndex;
+  // const model_name = value.split("/").pop();
+
+  console.log(type);
+  const changedData = {
+    model_name: value.split("/").pop(),
+    model_type: type,
+  };
+
+  // updateModels(changedData);
+};
+
 function ModelsBar() {
-  const { allModelsState, getModels, setOpenSidebar,updateModels } = useContext(AppContext);
+  const { allModelsState, getModels, setOpenSidebar, updateModels } =
+    useContext(AppContext);
   console.log(allModelsState);
   useEffect(() => {
     getModels();
@@ -29,19 +45,6 @@ function ModelsBar() {
     return null;
   };
 
-  const onSelectionChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    const type = e.target.options.selectedIndex;
-    // const model_name = value.split("/").pop();
-
-    console.log(type)
-    const changedData = {
-      model_name: value.split("/").pop(),
-      model_type: type,
-    };
-
-    // updateModels(changedData);
-  };
   return (
     <div>
       {allModelsState.isLoading ? (
@@ -51,9 +54,10 @@ function ModelsBar() {
           isIndeterminate
           label="Loading Models..."
           size="sm"
+          className="m-6"
         />
       ) : (
-        <Navbar position="sticky" maxWidth="full"  className="z-0 py-3 xl:py-4" >
+        <Navbar position="sticky" maxWidth="full" className="z-0 py-3 xl:py-4">
           <NavbarBrand className="xl:hidden">
             <div>
               <FaBars
@@ -91,8 +95,8 @@ function ModelsBar() {
               <div className="overflow-x-scroll w-[320px] flex flex-auto gap-x-6 md:w-[700px] lg:w-[1000px] xl:w-[100%] xl:overflow-x-hidden ">
                 {Object.keys(allModelsState?.allModels?.all_models).map(
                   (key, index) => {
-                    const filteredModels = filterModels(key)
-                    if(filteredModels==null){
+                    const filteredModels = filterModels(key);
+                    if (filteredModels == null) {
                       return null;
                     }
                     return (
@@ -102,7 +106,8 @@ function ModelsBar() {
                           label={key}
                           variant="bordered"
                           defaultValue={filteredModels?.defaultModel}
-                         />
+                          onChange={onSelectionChange}
+                        />
                       </NavbarItem>
                     );
                   }

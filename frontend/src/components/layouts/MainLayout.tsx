@@ -6,7 +6,7 @@ import {
   getAllSelectedValues,
   getImagesByTag,
 } from "@/lib/api";
-import { defaultFormData, FormContextType } from "@/lib/AppContext";
+import { defaultFormData } from "@/lib/AppContext";
 import { imageReducersConst, modelsReducersConst } from "@/lib/const";
 import {
   imagesReducers,
@@ -28,16 +28,16 @@ import { AppContextType } from "@/lib/types";
 
 export const AppContext = createContext<AppContextType>({
   formDataState: defaultFormData,
-  handleFormState: (v: any) => {},
+  handleFormState: () => { },
   generatedResponse: {},
-  handleFormSubmit: (obj: { [key: string]: any }, type: string): any => {},
-  getImages: (tag: string): any => {},
+  handleFormSubmit: (obj: { [key: string]: any; }, type: string): any => { },
+  getImages: (tag: string): any => { },
   allImagesState: initialImagesState,
-  getModels: () => {},
+  getModels: () => { },
   allModelsState: initialModelsState,
-  updateModels: (model: any) => {},
+  updateModels: (model: any) => { },
   openSidebar: false,
-  setOpenSidebar: () => {},
+  setOpenSidebar: () => { }
 });
 
 export default function MainLayout({ children, ...props }: ThemeProviderProps) {
@@ -52,7 +52,7 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
     modelsReducers,
     initialModelsState
   );
-  const router = useRouter();
+
 
   const handleFormState = (v: any): void => {
     // console.log(v)
@@ -181,7 +181,7 @@ export default function MainLayout({ children, ...props }: ThemeProviderProps) {
           setOpenSidebar,
         }}
       >
-        <div className="flex relative w-full h-screen backdrop-blur-lg bg-[#0000007d]">
+        <div className="flex w-full h-screen backdrop-blur-lg bg-[#0000007d]">
           <Sidebar />
           <ScrollShadow
             size={60}

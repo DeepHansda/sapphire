@@ -15,6 +15,7 @@ import { useContext, useState } from "react";
 import { BiBot, BiCog } from "react-icons/bi";
 import { AppContext } from "../layouts/MainLayout";
 import Selector from "../selector/Selector";
+import { onSelectionChange } from "../appNavbar/modelsBar/modelsBar";
 
 export default function PromptBox() {
   const {
@@ -31,7 +32,7 @@ export default function PromptBox() {
 
   return (
     <div className="w-full z-0">
-      <Accordion variant="bordered" defaultExpandedKeys={[0]}>
+      <Accordion variant="bordered" defaultExpandedKeys={["0"]}>
         <AccordionItem
           key="0"
           aria-label="Accordion 1"
@@ -90,9 +91,11 @@ export default function PromptBox() {
               <div className="flex gap-x-6 items-center max-w-xl">
                 <Selector
                   data={allModelsState.allModels.all_models?.loras}
-                  type="loras"
                   label="loras"
-                  selectedValues={allModelsState.selectedModels}
+                  defaultValue={
+                    allModelsState.allModels.selected_models["lora"]
+                  }
+                  onChange={onSelectionChange}
                 />
                 <Slider
                   onChange={(value) => handleFormState({ lora_scale: value })}

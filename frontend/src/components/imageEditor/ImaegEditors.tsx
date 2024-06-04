@@ -16,10 +16,10 @@ export const ImageEditors: React.FC = () => {
   const { formDataState, handleFormState } = useContext(AppContext);
 
   const fileChangedHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    const image = event.target.files[0];
-    if (image) {
-      handleFormState({ image: image });
-      const imgDataUrl = window.URL.createObjectURL(image);
+    const images = event.target.files;
+    if (images) {
+      handleFormState({ image: images[0] });
+      const imgDataUrl = window.URL.createObjectURL(images[0]);
       setPreviewImage(imgDataUrl);
     }
   };
