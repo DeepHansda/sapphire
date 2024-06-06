@@ -1,5 +1,0 @@
-{
-    "init_device": "cuda",
-    "checkpoint": "/kaggle/working/sapphire/backend/src/models/checkpoints/DreamShaper_8_pruned.safetensors",
-    "vae": "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
-}
