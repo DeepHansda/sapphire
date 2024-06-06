@@ -99,6 +99,7 @@ class Utils:
     async def download_with_wget(self, url: str, output_path: str):
         try:
             # Command to execute wget with the provided URL and output path
+           
             command = [
                 "wget",
                 "-c",

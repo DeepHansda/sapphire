@@ -1,8 +1,8 @@
+/backend/src/shared_values.json
 /backend/src/models
 /backend/src/input/
 /backend/src/output/
 /backend/**/__pycache__/
-/backend/src/shared_values.json
 
 
 # frontend 

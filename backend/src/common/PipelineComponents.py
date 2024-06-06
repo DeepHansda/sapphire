@@ -1,12 +1,9 @@
-from diffusers import AutoencoderKL, AutoPipelineForText2Image, StableDiffusionPipeline
+from diffusers import AutoencoderKL, StableDiffusionPipeline
 import common.shared as sharedValues
 import torch
-import asyncio
 from typing import Optional
-from common.const import INIT_DEVICE, CHECKPOINT, LORA
+from common.const import INIT_DEVICE, CHECKPOINT, LORA, VAE
 from diffusers import (
-    DDIMScheduler,
-    DDPMScheduler,
     DPMSolverMultistepScheduler,
     DPMSolverSinglestepScheduler,
     EulerAncestralDiscreteScheduler,
@@ -15,7 +12,6 @@ from diffusers import (
     KDPM2AncestralDiscreteScheduler,
     KDPM2DiscreteScheduler,
     LMSDiscreteScheduler,
-    PNDMScheduler,
     UniPCMultistepScheduler,
 )
 
@@ -24,40 +20,43 @@ class PipelineComponents:
     def __init__(self):
         self.component_pipeline: StableDiffusionPipeline = None
         self.torch_float = torch.float16
-        self.sharedValues = sharedValues.load_shared_values()
-        print(self.sharedValues)
-        self.device = self.sharedValues.get(INIT_DEVICE)
+        self.loaded_sharedValues = sharedValues.load_shared_values()
+        self.device = self.loaded_sharedValues.get(INIT_DEVICE)
 
     def pipeline_setup(self):
         if self.device == "cpu":
             self.torch_float = torch.float32
-            print(self.torch_float)
-        # model_path = "/kaggle/working/sapphire//src/models/checkpoints/v1-5-pruned-emaonly.safetensors"
-        sd_model_path = self.sharedValues.get(CHECKPOINT)
-        print("pipeline setup : " + sd_model_path)
-        vae_path = "/kaggle/working/sapphire/backend/src/models/vae/vae-ft-ema-560000-ema-pruned.safetensors"
+
+        if CHECKPOINT in self.loaded_sharedValues:
+            sd_model_path = self.loaded_sharedValues.get(CHECKPOINT)
+        else:
+            sd_model_path = "Lykon/DreamShaper"
         if self.device == "cuda":
             torch.cuda.empty_cache()
-        if vae_path:
+        if VAE in self.loaded_sharedValues:
+            vae_path = self.loaded_sharedValues.get(VAE)
             vae = AutoencoderKL.from_single_file(
                 vae_path, torch_dtype=self.torch_float
             ).to(self.device)
+        else:
+            vae = None
 
         comp_pipeline: StableDiffusionPipeline = (
             StableDiffusionPipeline.from_single_file(
                 sd_model_path,
-                vae=vae,
                 torch_dtype=self.torch_float,
                 use_safetensors=True,
                 safety_checker=None,
             ).to(self.device)
         )
+        if vae:
+            comp_pipeline.vae = vae
         self.component_pipeline = comp_pipeline
 
     def get_pipeline(self, ues_lora: Optional[bool] = False) -> StableDiffusionPipeline:
         if ues_lora == True:
 
-            lora_path = self.sharedValues.get(LORA)
+            lora_path = self.loaded_sharedValues.get(LORA)
             print(lora_path)
             # lora = "sapphire/backend/src/models/loras/ghibli_style_offset.safetensors"
             lora_weight_name = lora_path.split("/")[-1]
