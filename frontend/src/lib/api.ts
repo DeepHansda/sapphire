@@ -1,7 +1,7 @@
 import { IMG2IMG, TEXT2IMG } from "./const";
 
 
-const api = "http://127.0.0.1:8000";
+const api = process.env.API_URL || "http://127.0.0.1:8000";
 const kaggleBaseUrl = 'https://www.kaggle.com/api/v1';
 const get_opt = {
   method: "GET",
