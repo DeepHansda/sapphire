@@ -1,7 +1,7 @@
 import { IMG2IMG, TEXT2IMG } from "./const";
 
 
-const api = "https://quail-heroic-ghastly.ngrok-free.app/proxy/8000" || "http://localhost:8000";
+const api = "http://localhost:8000";
 const kaggleBaseUrl = 'https://www.kaggle.com/api/v1';
 const get_opt = {
   method: "GET",
