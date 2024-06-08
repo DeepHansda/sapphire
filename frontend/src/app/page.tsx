@@ -12,7 +12,7 @@ export default function Text2Img() {
   useEffect(() => {
     getImages(TEXT2IMG);
   }, []);
-  console.log(allImagesState);
+
   return (
     <main className="w-full h-auto">
       <PromptBox />

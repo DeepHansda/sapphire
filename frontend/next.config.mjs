@@ -7,6 +7,9 @@ const nextConfig = {
         // !! WARN !!
         ignoreBuildErrors: true,
       },
+      env: {
+        NEXT_PUBLIC_MY_NAME: process.env.NEXT_PUBLIC_API_URL, // pulls from .env file
+      },
 };
 
 export default nextConfig;

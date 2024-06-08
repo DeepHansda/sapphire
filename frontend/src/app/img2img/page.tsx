@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageEditors } from "@/components/imageEditor/ImaegEditors";
+import { ImageEditors } from "@/components/imageEditor/ImageEditors";
 import ImageGallery from "@/components/imageGallery/ImageGallery";
 import { AppContext } from "@/components/layouts/MainLayout";
 import PromptBox from "@/components/promptBox/PromptBox";
@@ -14,7 +14,7 @@ export default function Img2Img() {
   useEffect(() => {
     getImages(IMG2IMG);
   }, []);
-  console.log(allImagesState);
+
   return (
     <main className="w-full h-auto">
       <div className="flex flex-col w-full md:flex-row  justify-between  gap-4">
