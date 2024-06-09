@@ -1,7 +1,7 @@
 import { IMG2IMG, TEXT2IMG } from "./const";
 
 
-const api = "leading-manually-cowbird.ngrok-free.app";
+const api = "https://leading-manually-cowbird.ngrok-free.app";
 const kaggleBaseUrl = 'https://www.kaggle.com/api/v1';
 const get_opt = {
   method: "GET",
